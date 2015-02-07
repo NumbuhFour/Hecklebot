@@ -17,10 +17,15 @@ password = 'oauth:igsxawqpsklid3ecclq7gmfgzrl9u4'
 heckleFileName = 'heckles.txt'
 logFileName = 'log.txt'
 infoFileName = 'info.txt'
+kothFileName = 'kothPraises.txt'
 
 greetNewFollower = True
 greetedFollowers = []
 followerWelcomeMessage = 'Welcome, {}, to the hoard of hecklers!'
+
+koth = "numbuhfour"
+kothEnabled = True
+kothDelay = 15
 
 queue = 13
 
@@ -30,6 +35,24 @@ conf = []
 
 def loadSettings():
 	f = open('heckle.config','r')
+	global conf
+	global streamer
+	global bot_owner
+	global nick
+	global channel
+	global server
+	global password
+	global heckleFileName
+	global logFileName
+	global infoFileName
+	global greetNewFollower
+	global followerWelcomeMessage
+	global koth
+	global kothEnabled
+	global kothDelay
+	global kothFileName
+	global heckleTimer
+	
 	conf = json.loads(f.read());
 	streamer = conf['bot']['streamer']
 	bot_owner = conf['bot']['owner']
@@ -45,11 +68,15 @@ def loadSettings():
 	greetNewFollower = conf['greet']['greetNewFollower']
 	followerWelcomeMessage = conf['greet']['followerWelcomeMessage']
 	
-	global heckleTimer
+	koth = conf['koth']['king']
+	kothEnabled = conf['koth']['enabled']
+	kothDelay = conf['koth']['kothDelay']
+	kothFileName = conf['koth']['fileName']
+	
 	heckleTimer = conf['heckleTimer']
 	
 def saveSettings():
-	conf = { 'bot':{ 'owner':bot_owner, 'streamer':streamer, 'nick':nick, 'server':server, 'password':password }, 'files':{ 'heckles':heckleFileName, 'log':logFileName, 'info':infoFileName }, 'greet':{ 'greetNewFollower':greetNewFollower, 'followerWelcomeMessage':followerWelcomeMessage }, 'heckleTimer':heckleTimer }
+	conf = { 'bot':{ 'owner':bot_owner, 'streamer':streamer, 'nick':nick, 'server':server, 'password':password }, 'files':{ 'heckles':heckleFileName, 'log':logFileName, 'info':infoFileName }, 'greet':{ 'greetNewFollower':greetNewFollower, 'followerWelcomeMessage':followerWelcomeMessage }, 'heckleTimer':heckleTimer, 'koth':{'king':koth,'enabled':kothEnabled, 'kothDelay':kothDelay, 'fileName':kothFileName} }
 	
 	with open('heckle.config', 'w') as outfile: 
 		json.dump(conf,outfile)
@@ -65,10 +92,16 @@ def log(msg):
 	
 heckleFile = open(heckleFileName, 'r+')
 heckles = heckleFile.read().split('\n')
+heckleFile.close()
+
+kothFile = open(kothFileName, 'r+')
+kothPraises = kothFile.read().split('\n')
+kothFile.close()
 
 ops = []
 viewers = []
 infocmds = []
+kothTrack = {} #tracking last koth
 
 stop = False
 
@@ -101,6 +134,19 @@ def saveInfo():
 	
 loadInfo()
 
+def fetchJSON(url):
+	try:
+		res = urlopen(url)
+		data = json.loads(res.read())
+		return data
+	except HTTPError as e:
+		log("HTTPError on fetch: "+ e)
+		return None
+	except URLError as e:
+		log("URLError on fetch: "+ e)
+		return None
+	return None
+
 def message(msg): #function for sending messages to the IRC chat
 	global queue
 	queue = queue + 1
@@ -113,79 +159,69 @@ def message(msg): #function for sending messages to the IRC chat
 		log("Queue overflow. [" + msg + "] ignored.")
 
 def checkStreamOnline():
-	try:
-		res = urlopen('https://api.twitch.tv/kraken/streams/' + streamer)
-		data = json.loads(res.read())
-		if data['stream']:
-			isStreaming = True
-			return True
-		else:
-			isStreaming = False
-			return False
-	except HTTPError:
-		log("HTTPError on stream check")
+	data = fetchJSON('https://api.twitch.tv/kraken/streams/' + streamer)
+	if data == None:
 		isStreaming = False
 		return False
-	isStreaming = False
-	return False
+	if data['stream']:
+		isStreaming = True
+		return True
+	else:
+		isStreaming = False
+		return False
 	
 def getFollowers():
-	try:
-		i = 0
-		count = 1
-		getfollowers = []
-		attempts = 0
-		while True:
-			log("Follower Fetch Attempt: " + str(attempts))
-			attempts += 1
-			
-			response = urlopen('https://api.twitch.tv/kraken/channels/' + streamer + '/follows?direction=DESC&limit=100&offset=' + str(i))
-			data = json.loads(response.read())
-			count = data['_total']
-			
-			for follower in data['follows']:
-				name = follower['user']['display_name'].strip()
-				getfollowers.append(name)
-			
-			if i > count:
-				break;
-			i += 100;
-
-		log('Follower Recieved Count: ' + str(len(getfollowers)))
-		return getfollowers
-	except HTTPError:
-		log('HTTP Error fetching followers')
+	i = 0
+	count = 1
+	getfollowers = []
+	attempts = 0
+	while True:
+		log("Follower Fetch Attempt: " + str(attempts))
+		attempts += 1
+		
+		data = fetchJSON('https://api.twitch.tv/kraken/channels/' + streamer + '/follows?direction=DESC&limit=100&offset=' + str(i))
+		if data==None:
+			return None
+		
+		count = data['_total']
+		
+		for follower in data['follows']:
+			name = follower['user']['display_name'].strip()
+			getfollowers.append(name)
+		
+		if i > count:
+			break;
+		i += 100;
 		time.sleep(2)
-		return getFollowers()
+
+	log('Follower Recieved Count: ' + str(len(getfollowers)))
+	return getfollowers
 	
 def getSubscribers():
-	try:
-		i = 0
-		count = 1
-		getsubscribers = []
-		attempts = 0
-		while True:
-			log("Subscriber Fetch Attempt: " + str(attempts))
-			attempts += 1
-			
-			response = urlopen('https://api.twitch.tv/kraken/channels/' + streamer + '/subscriptions?direction=DESC&limit=100&offset=' + str(i))
-			data = json.loads(response.read())
-			count = data['_total']
-			
-			for sub in data['subscriptions']:
-				name = sub['user']['display_name'].strip()
-				getsubscribers.append(name)
-			
-			if i > count:
-				break;
-			i += 100;
-
-		log('Subscriber Recieved Count: ' + str(len(getsubscribers)))
-		return getsubscribers
-	except HTTPError:
-		log('HTTP Error fetching followers')
+	i = 0
+	count = 1
+	getsubscribers = []
+	attempts = 0
+	while True:
+		log("Subscriber Fetch Attempt: " + str(attempts))
+		attempts += 1
+		
+		data = fetchJSON('https://api.twitch.tv/kraken/channels/' + streamer + '/subscriptions?direction=DESC&limit=100&offset=' + str(i))
+		if data == None:
+			return None
+		count = data['_total']
+		
+		for sub in data['subscriptions']:
+			name = sub['user']['display_name'].strip()
+			getsubscribers.append(name)
+		
+		if i > count:
+			break;
+		i += 100;
 		time.sleep(2)
-		return getSubscribers()
+
+	log('Subscriber Recieved Count: ' + str(len(getsubscribers)))
+	return getsubscribers
 	
 def queuetimer(): #function for resetting the queue every 30 seconds and reloading log
 	global logfile
@@ -207,22 +243,20 @@ def followerCheckTimer(): #function for checking for a new follower every 2 seco
 	global greetNewFollower
 	global greetedFollowers
 	if checkStreamOnline() == True:
-		try:
-			if greetNewFollower == True:
-				if len(greetedFollowers) == 0:
-					greetedFollowers = getFollowers()
-					print('Greeted followers list refreshed. ' + str(len(greetedFollowers)))
-				else:
-					response = urlopen('https://api.twitch.tv/kraken/channels/' + streamer + '/follows?direction=DESC&limit=15&offset=0')
-					data = json.loads(response.read())
-					fols = data['follows']
-					for user in fols:
-						name = user['user']['display_name'].strip()
-						if (name in greetedFollowers) == False:
-							message(followerWelcomeMessage.format(name))
-							greetedFollowers.append(name)
-		except HTTPError:
-			log("HTTPError on follower check timer")
+		if greetNewFollower == True:
+			if len(greetedFollowers) == 0:
+				greetedFollowers = getFollowers()
+				print('Greeted followers list refreshed. ' + str(len(greetedFollowers)))
+			else:
+				data = fetchJSON('https://api.twitch.tv/kraken/channels/' + streamer + '/follows?direction=DESC&limit=15&offset=0')
+				if data == None:
+					return
+				fols = data['follows']
+				for user in fols:
+					name = user['user']['display_name'].strip()
+					if (name in greetedFollowers) == False:
+						message(followerWelcomeMessage.replace("@user@",name))
+						greetedFollowers.append(name)
 followerCheckTimer()
 
 def sendHeckle(user):
@@ -235,18 +269,38 @@ def addHeckle(heckle):
 	global heckles
 	global heckleFile
 	heckles.append(heckle)
+	heckleFile = open(heckleFileName,'r+')
 	heckleFile.seek(0,2) #go to end
 	heckleFile.write("\n" + heckle)
 	
 	heckleFile.close() #refreshing list
-	heckleFile = open('heckles.txt', 'r+')
+	heckleFile = open(heckleFileName, 'r+')
 	heckles = heckleFile.read().split('\n')
+	heckleFile.close() #refreshing list
+	
+def addKothPraise(praise):
+	log("Adding praise: " + praise)
+	global kothPraises
+	global kothFile
+	kothPraises.append(praise)
+	kothFile= open(kothFileName,'r+')
+	kothFile.seek(0,2) #go to end
+	kothFile.write("\n" + praise)
+	
+	kothFile.close() #refreshing list
+	kothFile = open(kothFileName, 'r+')
+	kothPraises = kothFile.read().split('\n')
+	kothFile.close() #refreshing list
 	
 def refreshHeckles():
 	log("Heckle list refreshed")
-	heckleFile.close() #refreshing list
-	heckleFile = open('heckles.txt', 'r+')
+	heckleFile = open(heckleFileName, 'r+')
 	heckles = heckleFile.read().split('\n')
+	heckleFile.close() #refreshing list
+	
+	kothFile = open(kothFileName, 'r+')
+	kothPraises = kothFile.read().split('\n')
+	kothFile.close() #refreshing list
 
 heckleTimerCountdown = 0
 def autoHeckle(): #auto heckles
@@ -277,32 +331,73 @@ def remViewer(user):
 	if (user in viewers):
 		print("[off]: REM USER " + user)
 		viewers.remove(user)
+
+		
+def praiseKing(user):
+	global kothPraises
+	praise = kothPraises[randint(0,len(kothPraises)-1)]
+	return praise.replace("@user@", user)
+
+def checkKing(user):
+	global isStreaming
+	if isStreaming == False:
+		message(user + ": The hill is protected while the stream is offline!")
+		return
+
+	global koth
+	global kothDelay
+	global kothTrack
 	
+	userTime = 0
+	if user in kothTrack:
+		userTime = kothTrack[user]
+	
+	curTime = round(time.time())
+	if (curTime-userTime) > kothDelay:
+		if user == koth.lower(): #Already king
+			message(user + ": " + praiseKing(koth))
+			return
+		
+		roll = randint(0,12)
+		if roll >= 10: #Victory
+			message(user + ": You rolled a " + str(roll) + ", claiming vitory over " + koth + ". " + praiseKing(user))
+			koth = user
+			saveSettings()
+		else: #Failure
+			message(user + ": You rolled a " + str(roll) + ", failing to win. " + praiseKing(koth))
+	kothTrack[user] = curTime
+
 	
 def takeMessage(user, msg, conf):
+	global kothEnabled
+	
 	lower = msg.lower()
 	if lower.find('!heckleme') != -1 or lower.find('!heckelme') != -1: #Heckle time!
 		sendHeckle(user)
 		#return
+	
+	elif kothEnabled == True and (lower.find('!koth') == 0 or lower.find('!kingofthehill') == 0 or lower.find('!kofth') == 0):
+		checkKing(user)
 		
 	elif lower.find('!') == 0:
-		print('Cockmonkeys')
+		#print('Cockmonkeys')
 		for key in infocmds:
-			print('Checking command ' + key)
+			#print('Checking command ' + key)
 			if lower.find('!' + key) == 0:
-				message(user + ': ' + infocmds[key])
+				message(user + ': ' + infocmds[key].replace("@user@",user))
 				#return
+				
 	#print "RAWR "+ lower + " || " + str(lower.find('!addheckle')) + "|" + str(isOp(user))
 	#print ops
 	
 	if isOp(user): #OP only commands
 		if lower.find('!help') == 0: 
-			message(user + ': !addHeckle [heckle]: Add a heckle ######### ' + '!refreshHeckles: Refreshes heckles from file ######### ' + '!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway ######### ' + '!greetFollower: Toggle welcoming new followers ######### ' + '!setFollowerWelcome [message with NAME for name]: Sets welcome message for new followers ######### ' + '!setHeckleTimer [minutes]: Sets delay for the auto-heckle ######### ' + '!addInfo [cmd] [message]: Adds a FAQ message to auto-respond to ######### ' + '!removeInfo [cmd]: Removes a FAQ message')
+			message(user + ': !addHeckle [heckle]: Add a heckle ######### ' + '!refreshHeckles: Refreshes heckles from file ######### ' + '!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway ######### ' + '!greetFollower: Toggle welcoming new followers ######### ' + '!setFollowerWelcome [message with @user@ for name]: Sets welcome message for new followers ######### ' + '!setHeckleTimer [minutes]: Sets delay for the auto-heckle ######### ' + '!addInfo [cmd] [message]: Adds a FAQ message to auto-respond to ######### ' + '!removeInfo [cmd]: Removes a FAQ message ######### ' + '!toggleKOTH : Toggles king of the hill ######### ' + '!addPraise [praise]: Adds a praise to the king! User @user@ for name ######### ' + '!setKOTHDelay [seconds]: Sets seconds between koth rolls')
 			#return
 		
 		if lower.find('!addheckle ') == 0: #Adding a heckle!
 			heckle = msg[11:].strip() #cut the !addheckle
-			print "DERP|" + heckle + "|" + str(len(heckle))
+			#print "DERP|" + heckle + "|" + str(len(heckle))
 			if len(heckle) > 0:
 				message(user + ": Adding heckle [" + heckle + "]")
 				addHeckle(heckle)
@@ -315,12 +410,20 @@ def takeMessage(user, msg, conf):
 			
 		if lower.find('!giveaway ') == 0:
 			pool = []
-			if lower.find('followers'):
-				pool += getFollowers()
-			if lower.find('viewers'):
+			if lower.find('followers') != -1:
+				fol = getFollowers()
+				if fol == None:
+					message(user + ": Error fetching followers. Try again in a bit.")
+					return
+				pool += fol
+			if lower.find('viewers') != -1:
 				pool += viewers
-			if lower.find('subscribers'):
-				pool += getSubscribers()
+			if lower.find('subscribers') != -1:
+				sub = getSubscribers()
+				if sub == None:
+					message(user + ": Error fetching followers. Try again in a bit.")
+					return
+				pool += sub
 			pool = list(set(pool)) #remove duplicates
 			print pool
 			message("{0}: And the winner is...... {1}!".format(user, pool[randint(0,len(pool)-1)]))
@@ -340,8 +443,8 @@ def takeMessage(user, msg, conf):
 			
 		if lower.find('!setfollowerwelcome ') == 0:
 			welcome = msg[20:] #cut the !setfollowerwelcome
-			followerWelcomeMessage = welcome.replace('NAME', '{}')
-			message(user + ': Follower welcome message changed to [' + followerWelcomeMessage.format(user) + ']')
+			#followerWelcomeMessage = welcome.replace('NAME', '{}')
+			message(user + ': Follower welcome message changed to [' + followerWelcomeMessage.replace("@user@", user) + ']')
 			saveSettings()
 			#return
 			
@@ -370,6 +473,29 @@ def takeMessage(user, msg, conf):
 			del infocmds[cmd]
 			saveInfo()
 			message(user + ": No longer responding to !" + cmd)
+		
+		if lower.find('!togglekoth') == 0:
+			if kothEnabled == False: #fucking pythons fucking scope bullshit fuck
+				message(user + ': King of the hill enabled')
+				kothEnabled = True;
+			else:
+				message(user + ': King of the hill disabled')
+				kothEnabled = False;
+			saveSettings()
+			
+		if lower.find('!addpraise ') == 0:
+			add = msg[11:]
+			if len(add) > 0:
+				message(user + ": Adding praise [" + add.replace("@user@",user) + "]")
+				addKothPraise(add)
+				
+		if lower.find('!setkothdelay ') == 0:
+			delay = int(msg[14:])
+			global kothDelay
+			kothDelay = delay;
+			message(user + ': KOTH delay set to ' + str(delay) + ' seconds.')
+			saveSettings()
+			
 			
 
 def handleMode(data):
@@ -434,6 +560,7 @@ log("Quitting.")
 stop = True
 logfile.close()
 heckleFile.close()
+kothFile.close()
 
 
 '''
