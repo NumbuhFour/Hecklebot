@@ -140,10 +140,10 @@ def fetchJSON(url):
 		data = json.loads(res.read())
 		return data
 	except HTTPError as e:
-		log("HTTPError on fetch: "+ e)
+		log("HTTPError on fetch: "+ str(e))
 		return None
 	except URLError as e:
-		log("URLError on fetch: "+ e)
+		log("URLError on fetch: "+ str(e))
 		return None
 	return None
 
