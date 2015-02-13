@@ -35,7 +35,7 @@ heckleTimer = 60*40 #How often to auto heckle
 
 conf = []
 
-oauthFile = open('oath.txt','r');
+oauthFile = open('oauth.txt','r');
 password = oauthFile.read();
 oauthFile.close();
 
