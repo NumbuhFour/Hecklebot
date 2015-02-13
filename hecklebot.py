@@ -13,7 +13,7 @@ streamer = 'misteratombomb'
 nick = 'Hecklebot'
 channel = '#misteratombomb'
 server = 'irc.twitch.tv'
-password = 'oauth:igsxawqpsklid3ecclq7gmfgzrl9u4'
+password = 'rawr';
 
 heckleFileName = 'heckles.txt'
 logFileName = 'log.txt'
