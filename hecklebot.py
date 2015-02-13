@@ -35,6 +35,10 @@ heckleTimer = 60*40 #How often to auto heckle
 
 conf = []
 
+oauthFile = open('oath.txt','r');
+password = oauthFile.read();
+oauthFile.close();
+
 def loadSettings():
 	f = open('heckle.config','r')
 	global conf
@@ -62,7 +66,6 @@ def loadSettings():
 	nick = conf['bot']['nick']
 	channel = '#' + streamer
 	server = conf['bot']['server']
-	password = conf['bot']['password']
 	
 	heckleFileName = conf['files']['heckles']
 	logFileName = conf['files']['log']
@@ -80,7 +83,7 @@ def loadSettings():
 	heckleTimer = conf['heckleTimer']
 	
 def saveSettings():
-	conf = { 'bot':{ 'owner':bot_owner, 'streamer':streamer, 'nick':nick, 'server':server, 'password':password }, 'files':{ 'heckles':heckleFileName, 'log':logFileName, 'info':infoFileName, 'chatlog':chatLogFileName }, 'greet':{ 'greetNewFollower':greetNewFollower, 'followerWelcomeMessage':followerWelcomeMessage }, 'heckleTimer':heckleTimer, 'koth':{'king':koth,'enabled':kothEnabled, 'kothDelay':kothDelay, 'fileName':kothFileName} }
+	conf = { 'bot':{ 'owner':bot_owner, 'streamer':streamer, 'nick':nick, 'server':server }, 'files':{ 'heckles':heckleFileName, 'log':logFileName, 'info':infoFileName, 'chatlog':chatLogFileName }, 'greet':{ 'greetNewFollower':greetNewFollower, 'followerWelcomeMessage':followerWelcomeMessage }, 'heckleTimer':heckleTimer, 'koth':{'king':koth,'enabled':kothEnabled, 'kothDelay':kothDelay, 'fileName':kothFileName} }
 	
 	with open('heckle.config', 'w') as outfile: 
 		json.dump(conf,outfile)
