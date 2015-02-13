@@ -37,7 +37,7 @@ def checkStreamOnline():
 print str(checkStreamOnline())
 '''
 rawr = {'kingofthenorth':'NumbuhFour is the king of everything!'}
-with open('info.txt', 'w') as outfile: 
+with open("/var/www/hecklebot/chatlog.txt", 'w') as outfile: 
 	json.dump(rawr,outfile)
 	
 for key in rawr:

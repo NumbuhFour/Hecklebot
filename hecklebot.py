@@ -6,6 +6,7 @@ import json
 from random import randint
 import time
 from urllib2 import HTTPError
+from urllib2 import URLError
 
 bot_owner = 'Numbuhfour'
 streamer = 'misteratombomb'
@@ -18,6 +19,7 @@ heckleFileName = 'heckles.txt'
 logFileName = 'log.txt'
 infoFileName = 'info.txt'
 kothFileName = 'kothPraises.txt'
+chatLogFileName = 'chatlog.txt'
 
 greetNewFollower = True
 greetedFollowers = []
@@ -52,6 +54,7 @@ def loadSettings():
 	global kothDelay
 	global kothFileName
 	global heckleTimer
+	global chatLogFileName
 	
 	conf = json.loads(f.read());
 	streamer = conf['bot']['streamer']
@@ -64,6 +67,7 @@ def loadSettings():
 	heckleFileName = conf['files']['heckles']
 	logFileName = conf['files']['log']
 	infoFileName = conf['files']['info']
+	chatLogFileName = conf['files']['chatlog']
 	
 	greetNewFollower = conf['greet']['greetNewFollower']
 	followerWelcomeMessage = conf['greet']['followerWelcomeMessage']
@@ -76,7 +80,7 @@ def loadSettings():
 	heckleTimer = conf['heckleTimer']
 	
 def saveSettings():
-	conf = { 'bot':{ 'owner':bot_owner, 'streamer':streamer, 'nick':nick, 'server':server, 'password':password }, 'files':{ 'heckles':heckleFileName, 'log':logFileName, 'info':infoFileName }, 'greet':{ 'greetNewFollower':greetNewFollower, 'followerWelcomeMessage':followerWelcomeMessage }, 'heckleTimer':heckleTimer, 'koth':{'king':koth,'enabled':kothEnabled, 'kothDelay':kothDelay, 'fileName':kothFileName} }
+	conf = { 'bot':{ 'owner':bot_owner, 'streamer':streamer, 'nick':nick, 'server':server, 'password':password }, 'files':{ 'heckles':heckleFileName, 'log':logFileName, 'info':infoFileName, 'chatlog':chatLogFileName }, 'greet':{ 'greetNewFollower':greetNewFollower, 'followerWelcomeMessage':followerWelcomeMessage }, 'heckleTimer':heckleTimer, 'koth':{'king':koth,'enabled':kothEnabled, 'kothDelay':kothDelay, 'fileName':kothFileName} }
 	
 	with open('heckle.config', 'w') as outfile: 
 		json.dump(conf,outfile)
@@ -134,16 +138,22 @@ def saveInfo():
 	
 loadInfo()
 
+def writeToChatLog(msg):
+	chatfile = open(chatLogFileName,'a')
+	time = datetime.datetime.now().strftime("[%m/%d/%Y %H:%M:%S]: ")
+	chatfile.write(time + msg + "<br />")
+	chatfile.close()
+
 def fetchJSON(url):
 	try:
 		res = urlopen(url)
 		data = json.loads(res.read())
 		return data
 	except HTTPError as e:
-		log("HTTPError on fetch: "+ str(e))
+		log("HTTPError on fetch: "+ str(e) + " URL:" + str(url))
 		return None
 	except URLError as e:
-		log("URLError on fetch: "+ str(e))
+		log("URLError on fetch: "+ str(e) + " URL:" + str(url))
 		return None
 	return None
 
@@ -155,15 +165,21 @@ def message(msg): #function for sending messages to the IRC chat
 		tosend = 'PRIVMSG ' + channel + ' :' + msg + '\r\n'
 		irc.send(tosend)
 		log("SENDING: " + tosend)
+		writeToChatLog(nick + ": " + msg)
 	else:
 		log("Queue overflow. [" + msg + "] ignored.")
 
 def checkStreamOnline():
 	data = fetchJSON('https://api.twitch.tv/kraken/streams/' + streamer)
+	global isStreaming
 	if data == None:
+		if isStreaming == True:
+			writeToChatLog("**STREAM END**")
 		isStreaming = False
 		return False
 	if data['stream']:
+		if isStreaming == False:
+			writeToChatLog("**STREAM BEGIN**")
 		isStreaming = True
 		return True
 	else:
@@ -322,12 +338,14 @@ def isOp(user):
 	
 def addViewer(user):
 	global viewers
+	writeToChatLog("**JOIN** " + user + " has joined.")
 	if ~(user in viewers) and user != 'hecklebot':
 		print("[off]: ADD USER " + user)
 		viewers.append(user)
 	
 def remViewer(user):
 	global viewers
+	writeToChatLog("**PART** " + user + " has left.")
 	if (user in viewers):
 		print("[off]: REM USER " + user)
 		viewers.remove(user)
@@ -358,9 +376,9 @@ def checkKing(user):
 			message(user + ": " + praiseKing(koth))
 			return
 		
-		roll = randint(0,12)
+		roll = randint(1,12)
 		if roll >= 10: #Victory
-			message(user + ": You rolled a " + str(roll) + ", claiming vitory over " + koth + ". " + praiseKing(user))
+			message(user + ": You rolled a " + str(roll) + ", claiming victory over " + koth + ". " + praiseKing(user))
 			koth = user
 			saveSettings()
 		else: #Failure
@@ -370,13 +388,14 @@ def checkKing(user):
 	
 def takeMessage(user, msg, conf):
 	global kothEnabled
+	writeToChatLog(user + ": " + msg)
 	
 	lower = msg.lower()
-	if lower.find('!heckleme') != -1 or lower.find('!heckelme') != -1: #Heckle time!
+	if lower.find('!heckleme') != -1 or lower.find('!heckelme') != -1 or lower.find('!hecklebot') != -1: #Heckle time!
 		sendHeckle(user)
 		#return
 	
-	elif kothEnabled == True and (lower.find('!koth') == 0 or lower.find('!kingofthehill') == 0 or lower.find('!kofth') == 0):
+	elif kothEnabled == True and (lower.find('!koth') != -1 or lower.find('!kingofthehill') != -1 or lower.find('!kofth') != -1):
 		checkKing(user)
 		
 	elif lower.find('!') == 0:
