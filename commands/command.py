@@ -1,10 +1,11 @@
 class Command:
 	reqOp = False;
+	helpString = ""
 	def __init__(self, hb):
 		self.hb = hb
 		pass
 		
-	def writeToConf(self, conf):
+	def writeConf(self, conf):
 		pass
 	
 	def readFromConf(self, conf):
@@ -16,6 +17,3 @@ class Command:
 	
 	def onMessage(self, message, user):
 		pass
-	
-	def requireOP(self):
-		return self.reqOp;
