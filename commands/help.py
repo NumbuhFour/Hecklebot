@@ -2,7 +2,7 @@ from command import Command
 class Help(Command):
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!help: DERP";
+		self.helpString = "";
 		pass
 		
 	def writeConf(self, conf):

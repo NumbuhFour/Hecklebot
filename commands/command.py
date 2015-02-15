@@ -17,3 +17,7 @@ class Command:
 	
 	def onMessage(self, message, user):
 		pass
+	
+	#In case a class has a thread
+	def start(self):
+		pass

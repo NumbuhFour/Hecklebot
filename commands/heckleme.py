@@ -10,24 +10,27 @@ class Heckleme(Command):
 	def __init__(self, hb):
 		self.hb = hb
 		self.helpString = "!help: DERP";
-		self.reqOp = True;
 		self.heckleTimerCountdown = 0
+		
+	def start(self):
 		self.autoHeckle()
 		
 	def writeConf(self, conf):
 		conf["heckle"] = {'heckles':self.heckleFileName,'heckleTimer':self.heckleTimer}
 	
 	def readFromConf(self, conf):
-		self.heckleFileName = conf['files']['heckles']
-		self.heckleTimer = conf['heckleTimer']
+		self.heckleFileName = conf['heckle']['heckles']
+		self.heckleTimer = conf['heckle']['heckleTimer']
 		
 		self.loadHeckles()
 		
 	def loadHeckles(self):
+		print("HECKLES LOADING");
 		self.heckleFile = open(self.heckleFileName, 'r')
 		input = self.heckleFile.read()
 		self.heckles = input.split('\n')
 		self.heckleFile.close()
+		print("HECKLES LOADING " + str(self.heckles));
 	
 	def saveHeckles(self):
 		self.heckleFile = open(self.heckleFileName,'w')
@@ -101,5 +104,5 @@ class Heckleme(Command):
 		self.heckleTimerCountdown -= 10
 		if(self.heckleTimerCountdown <= 0):
 			if self.hb.checkStreamOnline() == True:
-				self.sendHeckle(self.streamer)
+				self.sendHeckle(self.hb.streamer)
 			self.heckleTimerCountdown = self.heckleTimer

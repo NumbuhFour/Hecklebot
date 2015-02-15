@@ -12,6 +12,7 @@ from commands.koth import Koth
 from commands.help import Help
 from commands.info import Info
 from commands.heckleme import Heckleme
+from commands.greetFollowers import GreetFollowers
 
 true = True
 false = False
@@ -25,16 +26,7 @@ class Hecklebot:
 	password = 'rawr';
 	
 	logFileName = 'log.txt'
-	kothFileName = 'kothPraises.txt'
 	chatLogFileName = 'chatlog.txt'
-	
-	greetNewFollower = True
-	greetedFollowers = []
-	followerWelcomeMessage = 'Welcome, {}, to the hoard of hecklers!'
-
-	koth = "numbuhfour"
-	kothEnabled = True
-	kothDelay = 15
 
 	queue = 13
 
@@ -55,10 +47,6 @@ class Hecklebot:
 		
 		self.loadSettings()
 		self.logfile = open(self.logFileName,'a')
-
-		self.kothFile = open(self.kothFileName, 'r+')
-		self.kothPraises = self.kothFile.read().split('\n')
-		self.kothFile.close()
 
 		self.ops = []
 		self.viewers = []
@@ -83,12 +71,15 @@ class Hecklebot:
 	def initCommands(self):
 		self.commands.append(Help(self))
 		self.commands.append(Heckleme(self))
+		self.commands.append(Koth(self))
+		self.commands.append(GreetFollowers(self))
 		
 		self.commands.append(Info(self)) #perhaps last will prevent it from overriding actual commands?
 	
 	def start(self):
 		self.queuetimer()
-		self.followerCheckTimer()
+		for c in self.commands:
+			c.start() #Start threads (if applicable)
 
 		try:
 			self.run(self.conf)
@@ -99,7 +90,6 @@ class Hecklebot:
 			
 		self.stop = True
 		self.logfile.close()
-		self.kothFile.close()
 		
 	
 	def loadSettings(self):
@@ -115,26 +105,18 @@ class Hecklebot:
 		self.logFileName = self.conf['files']['log']
 		self.chatLogFileName = self.conf['files']['chatlog']
 		
-		self.greetNewFollower = self.conf['greet']['greetNewFollower']
-		self.followerWelcomeMessage = self.conf['greet']['followerWelcomeMessage']
-		
-		self.koth = self.conf['koth']['king']
-		self.kothEnabled = self.conf['koth']['enabled']
-		self.kothDelay = self.conf['koth']['kothDelay']
-		self.kothFileName = self.conf['koth']['fileName']
-		
 		
 		for c in self.commands:
 			c.readFromConf(self.conf)
 	
 	def saveSettings(self):
-		self.conf = { 'bot':{ 'owner':self.bot_owner, 'streamer':self.streamer, 'nick':self.nick, 'server':self.server }, 'files':{ 'log':self.logFileName, 'chatlog':self.chatLogFileName }, 'greet':{ 'greetNewFollower':self.greetNewFollower, 'followerWelcomeMessage':self.followerWelcomeMessage }, 'koth':{'king':self.koth,'enabled':self.kothEnabled, 'kothDelay':self.kothDelay, 'fileName':self.kothFileName} }
+		self.conf = { 'bot':{ 'owner':self.bot_owner, 'streamer':self.streamer, 'nick':self.nick, 'server':self.server }, 'files':{ 'log':self.logFileName, 'chatlog':self.chatLogFileName } }
 		
 		for c in self.commands:
 			c.writeConf(self.conf)
 		
 		with open('heckle.config', 'w') as outfile: 
-			json.dump(conf,outfile)
+			json.dump(self.conf,outfile)
 			
 
 
@@ -145,19 +127,6 @@ class Hecklebot:
 		
 
 		
-		
-	def addKothPraise(self, praise):
-		self.log("Adding praise: " + praise)
-		
-		self.kothPraises.append(praise)
-		self.kothFile= open(self.kothFileName,'r+')
-		self.kothFile.seek(0,2) #go to end
-		self.kothFile.write("\n" + praise)
-		
-		self.kothFile.close() #refreshing list
-		self.kothFile = open(self.kothFileName, 'r+')
-		self.kothPraises = self.kothFile.read().split('\n')
-		self.kothFile.close() #refreshing list
 
 	def writeToChatLog(self,msg):
 		chatfile = open(self.chatLogFileName,'a')
@@ -194,16 +163,16 @@ class Hecklebot:
 		if data == None:
 			if self.isStreaming == True:
 				self.writeToChatLog("**STREAM END**")
-			self.isStreaming = False
-			return False
+			self.isStreaming = True#False
+			return True#False
 		if data['stream']:
 			if self.isStreaming == False:
 				self.writeToChatLog("**STREAM BEGIN**")
 			self.isStreaming = True
 			return True
 		else:
-			self.isStreaming = False
-			return False
+			self.isStreaming = True#False
+			return True#False
 		
 	def getFollowers(self):
 		i = 0
@@ -267,28 +236,6 @@ class Hecklebot:
 		if self.stop == False:
 			threading.Timer(10,self.queuetimer).start()
 
-	def followerCheckTimer(self): #function for checking for a new follower every 2 seconds
-		if self.stop == False:
-			threading.Timer(10,self.followerCheckTimer).start()
-		else:
-			return
-		if self.checkStreamOnline() == True:
-			if self.greetNewFollower == True:
-				if len(self.greetedFollowers) == 0:
-					self.greetedFollowers = getFollowers()
-					print('Greeted followers list refreshed. ' + str(len(self.greetedFollowers)))
-				else:
-					data = self.fetchJSON('https://api.twitch.tv/kraken/channels/' + self.streamer + '/follows?direction=DESC&limit=15&offset=0')
-					if data == None:
-						return
-					fols = data['follows']
-					for user in fols:
-						name = user['user']['display_name'].strip()
-						if (name in self.greetedFollowers) == False:
-							message(self.followerWelcomeMessage.replace("@user@",name))
-							self.greetedFollowers.append(name)
-
-
 	def isOp(self, user):
 		return user in self.ops or user.lower() == self.bot_owner.lower() or user.lower() == self.streamer.lower()
 		
@@ -303,51 +250,16 @@ class Hecklebot:
 		if (user in self.viewers):
 			print("[off]: REM USER " + user)
 			self.viewers.remove(user)
-
-			
-	def praiseKing(self, user):
-		praise = self.kothPraises[randint(0,len(self.kothPraises)-1)]
-		return praise.replace("@user@", user)
-
-	def checkKing(self, user):
-		if self.isStreaming == False:
-			self.message(user + ": The hill is protected while the stream is offline!")
-			return
-		
-		userTime = 0
-		if user in self.kothTrack:
-			userTime = self.kothTrack[user]
-		
-		curTime = round(time.time())
-		if (curTime-userTime) > self.kothDelay:
-			if user == self.koth.lower(self): #Already king
-				self.message(user + ": " + self.praiseKing(koth))
-				return
-			
-			roll = randint(1,12)
-			if roll >= 10: #Victory
-				message(user + ": You rolled a " + str(roll) + ", claiming victory over " + self.koth + ". " + self.praiseKing(user))
-				self.koth = user
-				self.saveSettings()
-			else: #Failure
-				self.message(user + ": You rolled a " + str(roll) + ", failing to win. " + self.praiseKing(koth))
-		self.kothTrack[user] = curTime
-
 		
 	def takeMessage(self, user, msg, conf):
 		self.writeToChatLog(user + ": " + msg)
 		
 		lower = msg.lower()
 		
-		self.log("Test cmd len " + str(len(self.commands)))
 		for cmd in self.commands:
 			if cmd.checkMessage(msg,user) == True :
-				self.log("CMD WORK")
 				cmd.onMessage(msg,user)
 				return
-		
-		if self.kothEnabled == True and (lower.find('!koth') != -1 or lower.find('!kingofthehill') != -1 or lower.find('!kofth') != -1):
-			self.checkKing(user)
 			
 					
 		#print "RAWR "+ lower + " || " + str(lower.find('!addheckle')) + "|" + str(isOp(user))
@@ -378,46 +290,6 @@ class Hecklebot:
 				print pool
 				self.message("{0}: And the winner is...... {1}!".format(user, pool[randint(0,len(pool)-1)]))
 				#return
-				
-			if lower.find('!greetfollower') == 0:
-				#message(user + ': I WILL ALWAYS GREET FOLLOWERS YOU CANT CHANGE THAT BECAUSE FUCK PYTHON')
-				if self.greetNewFollower == False: #fucking pythons fucking scope bullshit fuck
-					self.message(user + ': Greeting new followers')
-					self.greetNewFollower = True;
-				else:
-					self.message(user + ': Not greeting new followers')
-					self.greetNewFollower = False;
-				self.saveSettings()
-				#return
-				
-			if lower.find('!setfollowerwelcome ') == 0:
-				welcome = msg[20:] #cut the !setfollowerwelcome
-				#followerWelcomeMessage = welcome.replace('NAME', '{}')
-				self.message(user + ': Follower welcome message changed to [' + self.followerWelcomeMessage.replace("@user@", user) + ']')
-				self.saveSettings()
-				#return
-			
-			if lower.find('!togglekoth') == 0:
-				if self.kothEnabled == False: #fucking pythons fucking scope bullshit fuck
-					self.message(user + ': King of the hill enabled')
-					self.kothEnabled = True;
-				else:
-					self.message(user + ': King of the hill disabled')
-					self.kothEnabled = False;
-				self.saveSettings()
-				
-			if lower.find('!addpraise ') == 0:
-				add = msg[11:]
-				if len(add) > 0:
-					self.message(user + ": Adding praise [" + add.replace("@user@",user) + "]")
-					self.addKothPraise(add)
-					
-			if lower.find('!setkothdelay ') == 0:
-				delay = int(msg[14:])
-				
-				self.kothDelay = delay;
-				self.message(user + ': KOTH delay set to ' + str(delay) + ' seconds.')
-				self.saveSettings()
 				
 				
 

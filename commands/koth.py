@@ -1,29 +1,119 @@
 from command import Command
+from random import randint
+import time
 class Koth(Command):
+	koth = "numbuhfour"
+	kothEnabled = True
+	kothDelay = 2400
+	kothFileName = "praises.txt"
+	kothPraises = []
+	kothTrack = []
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!help: DERP";
+		self.helpString = "!toggleKOTH: Toggles king of the hill ####### !addPraise [praise]: Add a praise to the king! Use @user@ for name ######## !setKOTHDelay [seconds]: Sets seconds between koth rolls";
 		pass
 		
+	def loadPraises(self):
+		self.kothFile = open(self.kothFileName, 'r+')
+		self.kothPraises = self.kothFile.read().split('\n')
+		self.kothFile.close()
+	
 	def writeConf(self, conf):
+		conf['koth'] = {}
+		conf['koth']['king'] = self.koth
+		conf['koth']['enabled'] = self.kothEnabled
+		conf['koth']['kothDelay'] = self.kothDelay
+		conf['koth']['fileName'] = self.kothFileName
 		pass
 	
 	def readFromConf(self, conf):
+		self.koth = conf['koth']['king']
+		self.kothEnabled = conf['koth']['enabled']
+		self.kothDelay = conf['koth']['kothDelay']
+		self.kothFileName = conf['koth']['fileName']
+		
+		self.loadPraises()
 		pass
 		
 	def checkMessage(self, message, user):
-		message = message.strip().lower()
-		if(message == "!help"):
-			self.hb.log("WOOO")
-			return True
-		else:
-			return False
+		lower = message.strip().lower()
 		
-	def onMessage(self, message, user):
-		self.hb.log("GO!!!!")
-		self.hb.message(user + ": You're a chicken!");
-	
-	def refreshPraises(self):
-		self.kothFile = open(self.kothFileName, 'r+')
-		self.kothPraises = self.kothFile.read().split('\n')
+		if (lower.find('!koth') != -1 or lower.find('!kingofthehill') != -1 or lower.find('!kofth') != -1):
+			return True
+		if lower.find('!togglekoth') == 0:
+			return True
+			
+		if lower.find('!addpraise ') == 0:
+			return True
+				
+		if lower.find('!setkothdelay ') == 0:
+			return True
+		
+	def onMessage(self, msg, user):
+		lower = msg.strip().lower()
+		if (lower.find('!koth') != -1 or lower.find('!kingofthehill') != -1 or lower.find('!kofth') != -1):
+			if self.kothEnabled == True:
+				self.checkKing(user)
+			else:
+				self.hb.message(user + ": The kingdom of the hill is currently under divine protection (disabled)")
+		if self.hb.isOp(user):
+			if lower.find('!togglekoth') == 0:
+				if self.kothEnabled == False: #fucking pythons fucking scope bullshit fuck
+					self.hb.message(user + ': King of the hill enabled')
+					self.kothEnabled = True;
+				else:
+					self.hb.message(user + ': King of the hill disabled')
+					self.kothEnabled = False;
+				self.hb.saveSettings()
+				
+			if lower.find('!addpraise ') == 0:
+				add = msg[11:]
+				if len(add) > 0:
+					self.hb.message(user + ": Adding praise [" + add.replace("@user@",user) + "]")
+					self.addKothPraise(add)
+					
+			if lower.find('!setkothdelay ') == 0:
+				delay = int(msg[14:])
+				
+				self.kothDelay = delay;
+				self.hb.message(user + ': KOTH delay set to ' + str(delay) + ' seconds.')
+				self.hb.saveSettings()
+
+			
+	def praiseKing(self, user):
+		praise = self.kothPraises[randint(0,len(self.kothPraises)-1)]
+		return praise.replace("@user@", user)
+
+	def checkKing(self, user):
+		if self.hb.isStreaming == False:
+			self.hb.message(user + ": The hill is protected while the stream is offline!")
+			return
+		
+		userTime = 0
+		if user in self.kothTrack:
+			userTime = self.kothTrack[user]
+		
+		curTime = round(time.time())
+		if (curTime-userTime) > self.kothDelay:
+			if user == self.koth.lower(): #Already king
+				self.hb.message(user + ": " + self.praiseKing(self.koth))
+				return
+			
+			roll = randint(1,12)
+			if roll >= 10: #Victory
+				self.hb.message(user + ": You rolled a " + str(roll) + ", claiming victory over " + self.koth + ". " + self.praiseKing(user))
+				self.koth = user
+				self.saveSettings()
+			else: #Failure
+				self.hb.message(user + ": You rolled a " + str(roll) + ", failing to win. " + self.praiseKing(koth))
+		self.kothTrack[user] = curTime
+		
+	def addKothPraise(self, praise):
+		self.hb.log("Adding praise: " + praise)
+		self.loadPraises()
+		
+		self.kothPraises.append(praise)
+		self.kothFile= open(self.kothFileName,'r+')
+		self.kothFile.seek(0,2) #go to end
+		self.kothFile.write("\n" + praise)
 		self.kothFile.close() #refreshing list
