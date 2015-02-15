@@ -13,6 +13,7 @@ from commands.help import Help
 from commands.info import Info
 from commands.heckleme import Heckleme
 from commands.greetFollowers import GreetFollowers
+from commands.giveaway import Giveaway
 
 true = True
 false = False
@@ -50,7 +51,6 @@ class Hecklebot:
 
 		self.ops = []
 		self.viewers = []
-		self.kothTrack = {} #tracking last koth
 
 		self.stop = False
 
@@ -73,6 +73,7 @@ class Hecklebot:
 		self.commands.append(Heckleme(self))
 		self.commands.append(Koth(self))
 		self.commands.append(GreetFollowers(self))
+		self.commands.append(Giveaway(self))
 		
 		self.commands.append(Info(self)) #perhaps last will prevent it from overriding actual commands?
 	
@@ -163,11 +164,15 @@ class Hecklebot:
 		if data == None:
 			if self.isStreaming == True:
 				self.writeToChatLog("**STREAM END**")
+				for c in self.commands:
+					c.onStreamBegin()
 			self.isStreaming = True#False
 			return True#False
 		if data['stream']:
 			if self.isStreaming == False:
 				self.writeToChatLog("**STREAM BEGIN**")
+				for c in self.commands:
+					c.onStreamEnd()
 			self.isStreaming = True
 			return True
 		else:
@@ -242,12 +247,16 @@ class Hecklebot:
 	def addViewer(self, user):
 		self.writeToChatLog("**JOIN** " + user + " has joined.")
 		if ~(user in self.viewers) and user != 'hecklebot':
+			for c in self.commands:
+				c.onJoin(user)
 			print("[off]: ADD USER " + user)
 			self.viewers.append(user)
 		
 	def remViewer(self, user):
 		writeToChatLog("**PART** " + user + " has left.")
 		if (user in self.viewers):
+			for c in self.commands:
+				c.onPart(user)
 			print("[off]: REM USER " + user)
 			self.viewers.remove(user)
 		
@@ -260,36 +269,6 @@ class Hecklebot:
 			if cmd.checkMessage(msg,user) == True :
 				cmd.onMessage(msg,user)
 				return
-			
-					
-		#print "RAWR "+ lower + " || " + str(lower.find('!addheckle')) + "|" + str(isOp(user))
-		#print ops
-		
-		if self.isOp(user): #OP only commands
-			if lower.find('!heslp') == 0: 
-				self.message(user + ': !addHeckle [heckle]: Add a heckle ######### ' + '!refreshHeckles: Refreshes heckles from file ######### ' + '!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway ######### ' + '!greetFollower: Toggle welcoming new followers ######### ' + '!setFollowerWelcome [message with @user@ for name]: Sets welcome message for new followers ######### ' + '!setHeckleTimer [minutes]: Sets delay for the auto-heckle ######### ' + '!addInfo [cmd] [message]: Adds a FAQ message to auto-respond to ######### ' + '!removeInfo [cmd]: Removes a FAQ message ######### ' + '!toggleKOTH : Toggles king of the hill ######### ' + '!addPraise [praise]: Adds a praise to the king! User @user@ for name ######### ' + '!setKOTHDelay [seconds]: Sets seconds between koth rolls')
-				#return
-				
-			if lower.find('!giveaway ') == 0:
-				pool = []
-				if lower.find('followers') != -1:
-					fol = self.getFollowers()
-					if fol == None:
-						self.message(user + ": Error fetching followers. Try again in a bit.")
-						return
-					pool += fol
-				if lower.find('viewers') != -1:
-					pool += self.viewers
-				if lower.find('subscribers') != -1:
-					sub = self.getSubscribers()
-					if sub == None:
-						self.message(user + ": Error fetching followers. Try again in a bit.")
-						return
-					pool += sub
-				pool = list(set(pool)) #remove duplicates
-				print pool
-				self.message("{0}: And the winner is...... {1}!".format(user, pool[randint(0,len(pool)-1)]))
-				#return
 				
 				
 

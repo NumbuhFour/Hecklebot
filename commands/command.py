@@ -21,3 +21,16 @@ class Command:
 	#In case a class has a thread
 	def start(self):
 		pass
+		
+	def onJoin(self, user):
+		pass
+	
+	def onPart(self, user):
+		pass
+		
+	def onStreamBegin(self):
+		pass
+	
+	def onStreamEnd(self):
+		pass
+		

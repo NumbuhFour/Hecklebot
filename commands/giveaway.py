@@ -1,39 +1,44 @@
 from command import Command
-class Koth(Command):
-	koth = "numbuhfour"
-	kothEnabled = True
-	kothDelay = 2400
-	kothFileName = "praises.txt"
+from random import randint
+class Giveaway(Command):
+
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!toggleKOTH: Toggles king of the hill ####### !addPraise [praise]: Add a praise to the king! Use @user@ for name ######## !setKOTHDelay [seconds]: Sets seconds between koth rolls";
+		self.helpString = "!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway";
 		pass
 		
 	def writeConf(self, conf):
-		conf['koth']['king'] = self.koth
-		conf['koth']['enabled'] = self.kothEnabled
-		conf['koth']['kothDelay'] = self.kothDelay
-		conf['koth']['fileName'] = self.kothFileName
 		pass
 	
 	def readFromConf(self, conf):
-		self.koth = conf['koth']['king']
-		self.kothEnabled = conf['koth']['enabled']
-		self.kothDelay = conf['koth']['kothDelay']
-		self.kothFileName = conf['koth']['fileName']
 		pass
 		
 	def checkMessage(self, message, user):
-		message = message.strip().lower()
-		if(message == "!help" and self.hb.isOp(user)):
+		lower = message.strip().lower()
+		if lower.find('!giveaway ') == 0 and self.hb.isOp(user):
 			return True
 		else:
 			return False
 		
 	def onMessage(self, message, user):
-		output = ""
-		for cmd in self.hb.commands:
-			help = cmd.helpString
-			if help != "":
-				output += help + " ######## "
-		self.hb.message(user + ": " + output)
+		lower = message.strip().lower()
+		if lower.find('!giveaway ') == 0:
+			pool = []
+			if lower.find('followers') != -1:
+				fol = self.hb.getFollowers()
+				if fol == None:
+					self.hb.message(user + ": Error fetching followers. Try again in a bit.")
+					return
+				pool += fol
+			if lower.find('viewers') != -1:
+				pool += self.hb.viewers
+			if lower.find('subscribers') != -1:
+				sub = self.hb.getSubscribers()
+				if sub == None:
+					self.hb.message(user + ": Error fetching followers. Try again in a bit.")
+					return
+				pool += sub
+			pool = list(set(pool)) #remove duplicates
+			print pool
+			self.hb.message("{0}: And the winner is...... {1}!".format(user, pool[randint(0,len(pool)-1)]))
+			#return

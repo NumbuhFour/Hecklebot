@@ -25,12 +25,10 @@ class Heckleme(Command):
 		self.loadHeckles()
 		
 	def loadHeckles(self):
-		print("HECKLES LOADING");
 		self.heckleFile = open(self.heckleFileName, 'r')
 		input = self.heckleFile.read()
 		self.heckles = input.split('\n')
 		self.heckleFile.close()
-		print("HECKLES LOADING " + str(self.heckles));
 	
 	def saveHeckles(self):
 		self.heckleFile = open(self.heckleFileName,'w')
