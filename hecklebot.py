@@ -106,7 +106,7 @@ class Hecklebot:
 		self.streamer = self.conf['bot']['streamer']
 		self.bot_owner = self.conf['bot']['owner']
 		self.nick = self.conf['bot']['nick']
-		self.channel = '#' + self.streamer
+		self.channel = '#' + self.streamer.lower()
 		self.server = self.conf['bot']['server']
 		
 		self.logFileName = self.conf['files']['log']
