@@ -54,11 +54,12 @@ class Loyalty(Command):
 		pass
 	
 	def onJoin(self, user):
-		if (user in self.alreadyPaid) == False:
-			self.hb.log("Paying " + user + " for loyalty")
-			self.money.pay(user, self.moneyPerView)
-			self.alreadyPaid.append(user.lower())
-		self.saveAlreadyPaid()
+		if self.hb.checkStreamOnline():
+			if (user in self.alreadyPaid) == False:
+				self.hb.log("Paying " + user + " for loyalty")
+				self.money.pay(user, self.moneyPerView)
+				self.alreadyPaid.append(user.lower())
+			self.saveAlreadyPaid()
 		pass
 	
 	def onStreamBegin(self):

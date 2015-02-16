@@ -22,7 +22,6 @@ class Help(Command):
 	def onMessage(self, message, user):
 		output = ""
 		isOp = self.hb.isOp(user)
-		count = 0
 		for cmd in self.hb.commands:
 			pubHelp = cmd.publicHelpString
 			if pubHelp != "":
@@ -32,11 +31,9 @@ class Help(Command):
 				if help != "":
 					output += help + " ######## "
 					
-			count = count+1
-			if(count > 5):
+			if(len(output) > 800):
 				self.hb.message(user + ": " + output)
 				output = ""
-				count = 0
 				time.sleep(1.5)
 			
 		self.hb.message(user + ": " + output)

@@ -71,13 +71,13 @@ class Hecklebot:
 		self.isStreaming = True
 	
 	def initCommands(self):
+		self.money = Money(self)
+		
 		self.commands.append(Help(self))
 		self.commands.append(Heckleme(self))
 		self.commands.append(Koth(self))
 		self.commands.append(GreetFollowers(self))
 		self.commands.append(Giveaway(self))
-		
-		self.money = Money(self)
 		self.commands.append(self.money)
 		self.commands.append(Loyalty(self))
 		

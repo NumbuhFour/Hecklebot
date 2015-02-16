@@ -84,7 +84,7 @@ class Money(Command):
 			self.saveBankFile()
 		elif self.hb.isOnline(user) == False:
 			print user + " not online"
-			return
+			return 0
 		
 		return self.bank[user.lower()]
 	
