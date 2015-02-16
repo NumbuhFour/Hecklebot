@@ -14,6 +14,8 @@ from commands.info import Info
 from commands.heckleme import Heckleme
 from commands.greetFollowers import GreetFollowers
 from commands.giveaway import Giveaway
+from commands.money import Money
+from commands.loyalty import Loyalty
 
 true = True
 false = False
@@ -74,6 +76,10 @@ class Hecklebot:
 		self.commands.append(Koth(self))
 		self.commands.append(GreetFollowers(self))
 		self.commands.append(Giveaway(self))
+		
+		self.money = Money(self)
+		self.commands.append(self.money)
+		self.commands.append(Loyalty(self))
 		
 		self.commands.append(Info(self)) #perhaps last will prevent it from overriding actual commands?
 	
@@ -165,19 +171,23 @@ class Hecklebot:
 			if self.isStreaming == True:
 				self.writeToChatLog("**STREAM END**")
 				for c in self.commands:
-					c.onStreamBegin()
-			self.isStreaming = True#False
-			return True#False
+					c.onStreamEnd()
+			self.isStreaming = False
+			return False
 		if data['stream']:
 			if self.isStreaming == False:
 				self.writeToChatLog("**STREAM BEGIN**")
 				for c in self.commands:
-					c.onStreamEnd()
+					c.onStreamBegin()
 			self.isStreaming = True
 			return True
 		else:
-			self.isStreaming = True#False
-			return True#False
+			if self.isStreaming == True:
+				self.writeToChatLog("**STREAM END**")
+				for c in self.commands:
+					c.onStreamEnd()
+			self.isStreaming = False
+			return False
 		
 	def getFollowers(self):
 		i = 0
@@ -247,19 +257,24 @@ class Hecklebot:
 	def addViewer(self, user):
 		self.writeToChatLog("**JOIN** " + user + " has joined.")
 		if ~(user in self.viewers) and user != 'hecklebot':
-			for c in self.commands:
-				c.onJoin(user)
 			print("[off]: ADD USER " + user)
 			self.viewers.append(user)
+			for c in self.commands:
+				c.onJoin(user)
 		
 	def remViewer(self, user):
 		writeToChatLog("**PART** " + user + " has left.")
 		if (user in self.viewers):
-			for c in self.commands:
-				c.onPart(user)
 			print("[off]: REM USER " + user)
 			self.viewers.remove(user)
-		
+			for c in self.commands:
+				c.onPart(user)
+	
+	def isOnline(self,user):
+		if (user in self.viewers): 
+			return True
+		return False
+	
 	def takeMessage(self, user, msg, conf):
 		self.writeToChatLog(user + ": " + msg)
 		

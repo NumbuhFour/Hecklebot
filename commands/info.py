@@ -5,7 +5,7 @@ class Info(Command):
 	fileName = "info.txt"
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!addInfo [cmd] [message]: Add a FAQ message to auto-respond to ######## !removeInfo [cmd]: Removes a FAQ message";
+		self.helpString = "*!addInfo [cmd] [message]: Add a FAQ message to auto-respond to ######## *!removeInfo [cmd]: Removes a FAQ message";
 		pass
 		
 	def writeConf(self, conf):

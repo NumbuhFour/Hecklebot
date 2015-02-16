@@ -1,8 +1,9 @@
 from command import Command
+import time
 class Help(Command):
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "";
+		self.publicHelpString = "!help: Print help";
 		pass
 		
 	def writeConf(self, conf):
@@ -13,15 +14,29 @@ class Help(Command):
 		
 	def checkMessage(self, message, user):
 		message = message.strip().lower()
-		if(message == "!help" and self.hb.isOp(user)):
+		if(message == "!help"):
 			return True
 		else:
 			return False
 		
 	def onMessage(self, message, user):
 		output = ""
+		isOp = self.hb.isOp(user)
+		count = 0
 		for cmd in self.hb.commands:
-			help = cmd.helpString
-			if help != "":
-				output += help + " ######## "
+			pubHelp = cmd.publicHelpString
+			if pubHelp != "":
+				output += pubHelp + " ######## "
+			if isOp == True:
+				help = cmd.helpString
+				if help != "":
+					output += help + " ######## "
+					
+			count = count+1
+			if(count > 5):
+				self.hb.message(user + ": " + output)
+				output = ""
+				count = 0
+				time.sleep(1.5)
+			
 		self.hb.message(user + ": " + output)

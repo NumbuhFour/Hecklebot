@@ -10,7 +10,8 @@ class Koth(Command):
 	kothTrack = []
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!toggleKOTH: Toggles king of the hill ####### !addPraise [praise]: Add a praise to the king! Use @user@ for name ######## !setKOTHDelay [seconds]: Sets seconds between koth rolls";
+		self.helpString = "*!toggleKOTH: Toggles king of the hill ####### *!addPraise [praise]: Add a praise to the king! Use @user@ for name ######## *!setKOTHDelay [seconds]: Sets seconds between koth rolls";
+		self.publicHelpString = "!koth: Roll to take the kingdom! 10 or more to win"
 		pass
 		
 	def loadPraises(self):
@@ -73,11 +74,15 @@ class Koth(Command):
 					self.addKothPraise(add)
 					
 			if lower.find('!setkothdelay ') == 0:
-				delay = int(msg[14:])
-				
-				self.kothDelay = delay;
-				self.hb.message(user + ': KOTH delay set to ' + str(delay) + ' seconds.')
-				self.hb.saveSettings()
+				try: 
+					delay = int(msg[14:])
+					
+					self.kothDelay = delay;
+					self.hb.message(user + ': KOTH delay set to ' + str(delay) + ' seconds.')
+					self.hb.saveSettings()
+				except ValueError:
+					self.hb.message(user + ": Error.")
+					pass
 
 			
 	def praiseKing(self, user):
@@ -106,7 +111,10 @@ class Koth(Command):
 				self.saveSettings()
 			else: #Failure
 				self.hb.message(user + ": You rolled a " + str(roll) + ", failing to win. " + self.praiseKing(koth))
-		self.kothTrack[user] = curTime
+				
+			self.kothTrack[user] = curTime
+		else:
+			self.hb.message(user + ": Your troops are still regrouping! They need " + self.kothTrack[user] + " more seconds!")
 		
 	def addKothPraise(self, praise):
 		self.hb.log("Adding praise: " + praise)

@@ -4,7 +4,7 @@ class GreetFollowers(Command):
 	greetedFollowers = []
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!greetFollower: Toggle welcoming new followers ######## !setFollowerWelcome [message with @user@ for name]: Sets welcome message for new followers";
+		self.helpString = "*!greetFollower: Toggle welcoming new followers ######## *!setFollowerWelcome [message with @user@ for name]: Sets welcome message for new followers";
 		pass
 		
 	def start(self):

@@ -4,7 +4,7 @@ class Giveaway(Command):
 
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway";
+		self.helpString = "*!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway";
 		pass
 		
 	def writeConf(self, conf):

@@ -1,6 +1,7 @@
 class Command:
 	reqOp = False;
 	helpString = ""
+	publicHelpString = ""
 	def __init__(self, hb):
 		self.hb = hb
 		pass

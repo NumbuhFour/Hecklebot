@@ -9,7 +9,8 @@ class Heckleme(Command):
 	
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "!help: DERP";
+		self.helpString = "*!addHeckle [heckle]: Add a heckle ######### *!refreshHeckles: Refreshes heckles from file ######## !setHeckleTimer [minutes]: Sets delay for the auto-heckle";
+		self.publicHelpString = "!heckleme: Treats your masochistic desires"
 		self.heckleTimerCountdown = 0
 		
 	def start(self):
@@ -75,11 +76,15 @@ class Heckleme(Command):
 				#return
 				
 			if lower.find('!setheckletimer ') == 0:
-				count = int(message[16:])
-				self.heckleTimer = count*60
-				self.heckleTimerCountdown = self.heckleTimer
-				self.hb.message(user + ': Auto-heckle timer set to ' + str(count) + ' minutes.')
-				self.hb.saveSettings()
+				try: 
+					count = int(message[16:])
+					self.heckleTimer = count*60
+					self.heckleTimerCountdown = self.heckleTimer
+					self.hb.message(user + ': Auto-heckle timer set to ' + str(count) + ' minutes.')
+					self.hb.saveSettings()
+				except ValueError:
+					self.hb.message(user + ": Error.")
+					pass
 				#return
 		
 	
