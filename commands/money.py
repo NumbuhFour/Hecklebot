@@ -136,9 +136,9 @@ class Money(Command):
 			print user + " not found, adding"
 			self.bank[user.lower()] = 0
 			self.saveBankFile()
-		elif self.hb.isOnline(user) == False:
-			print user + " not online"
-			return 0
+		#elif self.hb.isOnline(user) == False:
+		#	print user + " not online"
+		#	return 0
 		
 		return self.bank[user.lower()]
 	
@@ -158,9 +158,9 @@ class Money(Command):
 			return False
 		
 	def pay(self, user, amount):
-		self.checkBalance(user)
-		self.bank[user.lower()] += amount
-		self.saveBankFile()
+		if self.checkBalance(user) != None:
+			self.bank[user.lower()] += amount
+			self.saveBankFile()
 		
 	def onJoin(self, user):
 		self.checkBalance(user)

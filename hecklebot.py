@@ -263,7 +263,7 @@ class Hecklebot:
 				c.onJoin(user)
 		
 	def remViewer(self, user):
-		writeToChatLog("**PART** " + user + " has left.")
+		self.writeToChatLog("**PART** " + user + " has left.")
 		if (user in self.viewers):
 			print("[off]: REM USER " + user)
 			self.viewers.remove(user)
@@ -301,6 +301,7 @@ class Hecklebot:
 	def run(self, conf):
 		while True:
 			incoming = self.irc.recv(1204)
+			print incoming
 			for data in incoming.split('\n'):
 				if len(data.strip()) == 0:
 					continue

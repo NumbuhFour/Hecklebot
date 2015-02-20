@@ -7,7 +7,7 @@ class Koth(Command):
 	kothDelay = 2400
 	kothFileName = "praises.txt"
 	kothPraises = []
-	kothTrack = []
+	kothTrack = {}
 	def __init__(self, hb):
 		self.hb = hb
 		self.helpString = "*!toggleKOTH: Toggles king of the hill ####### *!addPraise [praise]: Add a praise to the king! Use @user@ for name ######## *!setKOTHDelay [seconds]: Sets seconds between koth rolls";
@@ -98,7 +98,7 @@ class Koth(Command):
 		if user in self.kothTrack:
 			userTime = self.kothTrack[user]
 		
-		curTime = round(time.time())
+		curTime = round(time.time()) 
 		if (curTime-userTime) > self.kothDelay:
 			if user == self.koth.lower(): #Already king
 				self.hb.message(user + ": " + self.praiseKing(self.koth))
@@ -108,13 +108,13 @@ class Koth(Command):
 			if roll >= 10: #Victory
 				self.hb.message(user + ": You rolled a " + str(roll) + ", claiming victory over " + self.koth + ". " + self.praiseKing(user))
 				self.koth = user
-				self.saveSettings()
+				self.hb.saveSettings()
 			else: #Failure
-				self.hb.message(user + ": You rolled a " + str(roll) + ", failing to win. " + self.praiseKing(koth))
+				self.hb.message(user + ": You rolled a " + str(roll) + ", failing to win. " + self.praiseKing(self.koth))
 				
 			self.kothTrack[user] = curTime
 		else:
-			self.hb.message(user + ": Your troops are still regrouping! They need " + self.kothTrack[user] + " more seconds!")
+			self.hb.message(user + ": Your troops are still regrouping! They need " + str(self.kothDelay - (curTime - userTime)) + " more seconds!")
 		
 	def addKothPraise(self, praise):
 		self.hb.log("Adding praise: " + praise)
