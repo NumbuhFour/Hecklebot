@@ -11,7 +11,7 @@ class Money(Command):
 	def __init__(self, hb):
 		self.hb = hb
 		self.helpString = "*!give [target] [amount]: Grants target user x monies"
-		self.publicHelpString = "!balance: Prints out your current balance ######## !pay [target] [amount]: Pays target x monies from your account ######## [user]++ : Grant a user " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + " for being awesome"
+		self.publicHelpString = "!balance: Prints out your current balance ######## !pay [target] [amount]: Pays target x monies from your account ######## [user]++ : Grant a user " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + " for being awesome ######## [user]-- : Deducts " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + "from a user for being not awesome "
 		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ######## *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes";
 		pass
 		
@@ -34,6 +34,8 @@ class Money(Command):
 		if lower.find('!bal') != -1 or lower.find('!pay ') == 0:
 			return True
 		elif lower.find('++') != -1:
+			return True;
+		elif lower.find('--') != -1:
 			return True;
 		elif self.hb.isOp(user) == True:
 			if lower.find('!give ') == 0:
@@ -64,6 +66,18 @@ class Money(Command):
 							break
 						elif self.checkBalance(name) != None:
 							self.pay(name, self.karmaPerVote)
+							self.karmaTimer[user] = curTime
+							break
+				pass
+		elif lower.find('--') != -1:
+			curTime = time.time()
+			if (user in self.karmaTimer) == False or curTime-self.karmaTimer[user] > self.voteDelay:
+				split = lower.split(' ')
+				for t in split:
+					if t.find('--') == (len(t)-2) and len(t) > 2: #Check if at end
+						name = t[:-2]
+						if self.checkBalance(name) != None:
+							self.pay(name, -self.karmaPerVote)
 							self.karmaTimer[user] = curTime
 							break
 				pass

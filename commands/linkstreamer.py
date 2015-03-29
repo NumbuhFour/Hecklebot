@@ -1,5 +1,6 @@
 from command import Command
 import json
+from random import randint
 class LinkStreamer(Command):
 	links = {}
 	fileName = "streamerlinks.txt"
@@ -62,6 +63,35 @@ class LinkStreamer(Command):
 		with open(self.fileName, 'w') as outfile: 
 			json.dump(self.links,outfile)
 			outfile.close()
+	
+	def findStream(self):
+		list = self.links.copy()
+		online = False
+		streamer = ""
+		message = ""
+		
+		for(i in range(0, min(len(list['names']),10)):
+			index = randint(0,len(list['names'])-1)
+			streamer = list['names'][index]
+			message = list['messages'][index]
+			if(self.hb.checkOtherOnline(streamer)):
+				online = True
+				break
+		
+		if streamer != "":
+			if(online == True):
+				send = "It looks like the streams over, but " + streamer + " is streaming! Go check it out http://twitch.tv/" + streamer
+				if message != "":
+					send = send + ' : "' + message '"'
+				self.hb.message(send)
+			else :
+				send = "It looks like the streams over, but why not check out " + streamer + "? http://twitch.tv/" + streamer + "/profile"
+				if message != "":
+					send = send + ' : "' + message '"'
+				self.hb.message(send)
+				pass
+			pass
+		
 			
 			'''
 			-!addStream to add a link to hecklebot's list of streamers

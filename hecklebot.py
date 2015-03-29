@@ -16,6 +16,7 @@ from commands.greetFollowers import GreetFollowers
 from commands.giveaway import Giveaway
 from commands.money import Money
 from commands.loyalty import Loyalty
+from commands.followViewers import FollowViewers
 
 true = True
 false = False
@@ -61,7 +62,7 @@ class Hecklebot:
 		self.irc = socket.socket()
 		self.irc.connect((self.server,6667))
 
-		self.irc.send('PASS ' + self.password + '\r\n')
+		self.irc.send('PASS oauth:' + self.password + '\r\n')
 		self.irc.send('USER ' + self.nick + ' 0 * : ' + self.bot_owner + '\r\n')
 		self.irc.send('NICK ' + self.nick + '\r\n')
 		self.irc.send('JOIN ' + self.channel + '\r\n')
@@ -80,6 +81,7 @@ class Hecklebot:
 		self.commands.append(Giveaway(self))
 		self.commands.append(self.money)
 		self.commands.append(Loyalty(self))
+		self.commands.append(FollowViewers(self))
 		
 		self.commands.append(Info(self)) #perhaps last will prevent it from overriding actual commands?
 	
@@ -187,6 +189,15 @@ class Hecklebot:
 				for c in self.commands:
 					c.onStreamEnd()
 			self.isStreaming = False
+			return False
+		
+	def checkOtherOnline(self, streamer):
+		data = self.fetchJSON('https://api.twitch.tv/kraken/streams/' + streamer)
+		if data == None:
+			return False
+		if data['stream']:
+			return True
+		else:
 			return False
 		
 	def getFollowers(self):

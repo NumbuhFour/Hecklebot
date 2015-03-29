@@ -104,7 +104,7 @@ class Koth(Command):
 				self.hb.message(user + ": " + self.praiseKing(self.koth))
 				return
 			
-			roll = randint(1,12)
+			roll = randint(1,6) + randint(1,6)
 			if roll >= 10: #Victory
 				self.hb.message(user + ": You rolled a " + str(roll) + ", claiming victory over " + self.koth + ". " + self.praiseKing(user))
 				self.koth = user

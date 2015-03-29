@@ -1,0 +1,250 @@
+[03/24/2015 19:41:44]: PING :tmi.twitch.tv
+[03/24/2015 19:41:44]: PONG
+[03/24/2015 19:45:55]: PING :tmi.twitch.tv
+[03/24/2015 19:45:55]: PONG
+[03/24/2015 19:50:49]: PING :tmi.twitch.tv
+[03/24/2015 19:50:49]: PONG
+[03/24/2015 19:55:46]: PING :tmi.twitch.tv
+[03/24/2015 19:55:46]: PONG
+[03/24/2015 20:00:13]: PING :tmi.twitch.tv
+[03/24/2015 20:00:13]: PONG
+[03/24/2015 20:05:04]: PING :tmi.twitch.tv
+[03/24/2015 20:05:04]: PONG
+[03/24/2015 20:09:06]: PING :tmi.twitch.tv
+[03/24/2015 20:09:06]: PONG
+[03/24/2015 20:13:32]: PING :tmi.twitch.tv
+[03/24/2015 20:13:32]: PONG
+[03/24/2015 20:18:29]: PING :tmi.twitch.tv
+[03/24/2015 20:18:29]: PONG
+[03/24/2015 20:23:03]: PING :tmi.twitch.tv
+[03/24/2015 20:23:03]: PONG
+[03/24/2015 20:27:26]: PING :tmi.twitch.tv
+[03/24/2015 20:27:26]: PONG
+[03/24/2015 20:32:04]: PING :tmi.twitch.tv
+[03/24/2015 20:32:04]: PONG
+[03/24/2015 20:34:16]: Paying crad2014 for loyalty (stream begin
+[03/24/2015 20:34:40]: :misteratombomb!misteratombomb@misteratombomb.tmi.twitch.tv JOIN #misteratombomb
+[03/24/2015 20:34:41]: Paying misteratombomb for loyalty
+[03/24/2015 20:34:41]: :jtv MODE #misteratombomb +o misteratombomb
+[03/24/2015 20:34:41]: Opping misteratombomb
+[03/24/2015 20:36:04]: :misteratombomb!misteratombomb@misteratombomb.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 20:36:04]: SENDING: PRIVMSG #misteratombomb :misteratombomb: You rolled a 8, failing to win. wukangklan is pretty dang cool
+
+[03/24/2015 20:36:11]: PING :tmi.twitch.tv
+[03/24/2015 20:36:11]: PONG
+[03/24/2015 20:36:25]: SENDING: PRIVMSG #misteratombomb :MisterAtomBomb: I could have been your dad but the guy behind me had exact change
+
+[03/24/2015 20:38:01]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv JOIN #misteratombomb
+[03/24/2015 20:38:01]: Paying numbuhfour for loyalty
+[03/24/2015 20:38:45]: Paying crad2014 for loyalty (stream begin
+[03/24/2015 20:38:45]: Paying misteratombomb for loyalty (stream begin
+[03/24/2015 20:38:45]: Paying numbuhfour for loyalty (stream begin
+[03/24/2015 20:41:10]: PING :tmi.twitch.tv
+[03/24/2015 20:41:10]: PONG
+[03/24/2015 20:44:35]: Paying crad2014 for loyalty (stream begin
+[03/24/2015 20:44:35]: Paying misteratombomb for loyalty (stream begin
+[03/24/2015 20:44:35]: Paying numbuhfour for loyalty (stream begin
+[03/24/2015 20:44:55]: Paying crad2014 for loyalty (stream begin
+[03/24/2015 20:44:55]: Paying misteratombomb for loyalty (stream begin
+[03/24/2015 20:44:55]: Paying numbuhfour for loyalty (stream begin
+[03/24/2015 20:45:53]: PING :tmi.twitch.tv
+[03/24/2015 20:45:53]: PONG
+[03/24/2015 20:47:18]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PART #misteratombomb
+[03/24/2015 20:50:07]: PING :tmi.twitch.tv
+[03/24/2015 20:50:07]: PONG
+[03/24/2015 20:54:24]: PING :tmi.twitch.tv
+[03/24/2015 20:54:24]: PONG
+[03/24/2015 20:59:02]: PING :tmi.twitch.tv
+[03/24/2015 20:59:02]: PONG
+[03/24/2015 21:01:00]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv JOIN #misteratombomb
+[03/24/2015 21:01:00]: Paying richard_a_smasher for loyalty
+[03/24/2015 21:03:39]: PING :tmi.twitch.tv
+[03/24/2015 21:03:39]: PONG
+[03/24/2015 21:04:12]: :poco9091!poco9091@poco9091.tmi.twitch.tv JOIN #misteratombomb
+[03/24/2015 21:04:12]: Paying poco9091 for loyalty
+[03/24/2015 21:08:04]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :i still feel like you dont really grasp how to use the pistol.....
+[03/24/2015 21:08:10]: PING :tmi.twitch.tv
+[03/24/2015 21:08:10]: PONG
+[03/24/2015 21:08:38]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :shoot them in tthe middle of an attack
+[03/24/2015 21:08:56]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :then press r1 when theyre staggered
+[03/24/2015 21:09:30]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :dude its a riposte
+[03/24/2015 21:09:36]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :like a backstab
+[03/24/2015 21:09:40]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :critical damage
+[03/24/2015 21:10:02]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :press r1 next time
+[03/24/2015 21:10:37]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :Mister!!!!!!!!!!
+[03/24/2015 21:10:42]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :did you download the day 1 patch?
+[03/24/2015 21:11:34]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :good just got home, downloading it now then I can playyyyyyyyyyy Kreygasm
+[03/24/2015 21:12:26]: PING :tmi.twitch.tv
+[03/24/2015 21:12:26]: PONG
+[03/24/2015 21:12:29]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :Ohhhh :o
+[03/24/2015 21:13:01]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :he wasnt staggered
+[03/24/2015 21:13:50]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :those enemies look scurrrrrry PogChamp
+[03/24/2015 21:14:02]: :wukangklan!wukangklan@wukangklan.tmi.twitch.tv JOIN #misteratombomb
+[03/24/2015 21:14:02]: Paying wukangklan for loyalty
+[03/24/2015 21:14:43]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :im so hype im gonna jump out of my skin Kappa
+[03/24/2015 21:15:56]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :you have to move into the person like youre backstabing
+[03/24/2015 21:16:13]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :or parrying/riposting
+[03/24/2015 21:16:25]: SENDING: PRIVMSG #misteratombomb :MisterAtomBomb: My days of not takin' you seriously are certainly coming to a middle.
+
+[03/24/2015 21:16:27]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :i love the blood effect in here looks so real
+[03/24/2015 21:16:33]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :Keepo
+[03/24/2015 21:16:33]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :it works the exact same way as parrying in the other dark souls games except easier
+[03/24/2015 21:16:49]: PING :tmi.twitch.tv
+[03/24/2015 21:16:49]: PONG
+[03/24/2015 21:17:35]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :theres a wooden plank shield
+[03/24/2015 21:17:39]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :i wouldnt recommend it
+[03/24/2015 21:17:44]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :but its the only shield in the game
+[03/24/2015 21:19:21]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv JOIN #misteratombomb
+[03/24/2015 21:19:46]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:19:46]: SENDING: PRIVMSG #misteratombomb :numbuhfour: You rolled a 7, failing to win. wukangklan is the very best that no one ever was!
+
+[03/24/2015 21:20:00]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:20:00]: SENDING: PRIVMSG #misteratombomb :richard_a_smasher: You rolled a 6, failing to win. wukangklan is pretty dang cool
+
+[03/24/2015 21:21:01]: PING :tmi.twitch.tv
+[03/24/2015 21:21:01]: PONG
+[03/24/2015 21:25:00]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:25:00]: SENDING: PRIVMSG #misteratombomb :poco9091: You rolled a 7, failing to win. Praise be unto wukangklan, our valiant king!
+
+[03/24/2015 21:25:10]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :DansGame
+[03/24/2015 21:25:32]: PING :tmi.twitch.tv
+[03/24/2015 21:25:32]: PONG
+[03/24/2015 21:25:43]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:25:43]: SENDING: PRIVMSG #misteratombomb :crad2014: You rolled a 10, claiming victory over wukangklan. Rejoice! Our valiant king crad2014 will lead us to prosperity!
+
+[03/24/2015 21:25:49]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:25:49]: SENDING: PRIVMSG #misteratombomb :numbuhfour: You rolled a 4, failing to win. Rejoice! Our valiant king crad2014 will lead us to prosperity!
+
+[03/24/2015 21:25:54]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :kappa
+[03/24/2015 21:25:57]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :damn
+[03/24/2015 21:26:12]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :cod u hack Kappa
+[03/24/2015 21:26:19]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :crad**
+[03/24/2015 21:26:35]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :fuck that wukang kid
+[03/24/2015 21:28:05]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :rekt
+[03/24/2015 21:28:27]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :uh oh SMSkull
+[03/24/2015 21:28:38]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :moonBlood
+[03/24/2015 21:29:12]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :please for the love of christ practice the crit attack
+[03/24/2015 21:29:40]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :the shit talk is real
+[03/24/2015 21:30:24]: PING :tmi.twitch.tv
+[03/24/2015 21:30:24]: PONG
+[03/24/2015 21:30:28]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :its what we're here for
+[03/24/2015 21:30:39]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :finally
+[03/24/2015 21:30:42]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :!heckleme
+[03/24/2015 21:30:42]: SENDING: PRIVMSG #misteratombomb :numbuhfour: They wouldn't do so much damage if you blocked them
+
+[03/24/2015 21:30:50]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :boss fight
+[03/24/2015 21:31:46]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :block them with your face. use your head
+[03/24/2015 21:31:48]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :no fog gates in this game appear the first time you walk into the bosses area
+[03/24/2015 21:32:31]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :told you that move is OP
+[03/24/2015 21:33:03]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :oh man
+[03/24/2015 21:33:07]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :scurrry
+[03/24/2015 21:33:14]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :but i dnt care Kreygasm
+[03/24/2015 21:33:18]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :his head is his weak spot so hitting it with a bullet hsould stagger him
+[03/24/2015 21:33:37]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :also all bosses have stages, they get tougher the more their health decreases
+[03/24/2015 21:34:02]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :dem screams
+[03/24/2015 21:34:39]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :dont tell him the right answers, thats no fun
+[03/24/2015 21:34:58]: PING :tmi.twitch.tv
+[03/24/2015 21:34:58]: PONG
+[03/24/2015 21:35:01]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :tell him something funny like his big toe is his weakspot but only to teabagging
+[03/24/2015 21:35:25]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :right on d pad to get more bullets at the cost of some health
+[03/24/2015 21:36:04]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :GG Atom
+[03/24/2015 21:36:19]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :time to level up bby
+[03/24/2015 21:37:05]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :also you upgrade weapons with bloodstone shards at the workbench in the hunters dream
+[03/24/2015 21:39:32]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :you have to have 10 insight to go into other peoples worlds
+[03/24/2015 21:39:47]: PING :tmi.twitch.tv
+[03/24/2015 21:39:47]: PONG
+[03/24/2015 21:39:56]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :no
+[03/24/2015 21:41:28]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :save up to 10 insight then buy a certain bell from a messenger(creepy little creatures) that appear in the hunters dream, only appears with 10 insight and he sells the bell that lets you be summoned to other peoples worlds
+[03/24/2015 21:42:20]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :get insight from seeing bosses, killing bosses and those items
+[03/24/2015 21:42:57]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :you gain one just by entering the boss area even if they kill you
+[03/24/2015 21:43:36]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :makes sense since it costs one insight to summon someone
+[03/24/2015 21:44:04]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:44:04]: SENDING: PRIVMSG #misteratombomb :crad2014: crad2014 is pretty dang cool
+
+[03/24/2015 21:44:15]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:44:15]: SENDING: PRIVMSG #misteratombomb :richard_a_smasher: You rolled a 10, claiming victory over crad2014. Praise be unto richard_a_smasher, our valiant king!
+
+[03/24/2015 21:44:18]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :ayy
+[03/24/2015 21:44:20]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :lmao
+[03/24/2015 21:44:20]: PING :tmi.twitch.tv
+[03/24/2015 21:44:20]: PONG
+[03/24/2015 21:44:26]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :this guy
+[03/24/2015 21:44:29]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :wait
+[03/24/2015 21:44:32]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :ayy
+[03/24/2015 21:44:37]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:44:37]: SENDING: PRIVMSG #misteratombomb :crad2014: You rolled a 10, claiming victory over richard_a_smasher. Rejoice! Our valiant king crad2014 will lead us to prosperity!
+
+[03/24/2015 21:44:48]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :Kappa
+[03/24/2015 21:44:49]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:44:49]: SENDING: PRIVMSG #misteratombomb :numbuhfour: You rolled a 8, failing to win. Hey crad2014, you da bomb!
+
+[03/24/2015 21:44:55]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :>:[
+[03/24/2015 21:45:23]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :moonCry
+[03/24/2015 21:45:49]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :hey numbuhfour was it a coincidence that hecklebot said lmao after i said ayy?
+[03/24/2015 21:45:52]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :is that a record for shortest reign?
+[03/24/2015 21:46:23]: :misteratombomb!misteratombomb@misteratombomb.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:46:23]: SENDING: PRIVMSG #misteratombomb :misteratombomb: You rolled a 8, failing to win. Rejoice! Our valiant king crad2014 will lead us to prosperity!
+
+[03/24/2015 21:46:39]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :not even close
+[03/24/2015 21:47:07]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :numbuhfour i summon you answer my question
+[03/24/2015 21:47:33]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :Yeah numberfour
+[03/24/2015 21:47:46]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :You gotta rub my lamp
+[03/24/2015 21:47:49]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :rub it hard
+[03/24/2015 21:48:03]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :;)
+[03/24/2015 21:48:08]: :wukangklan!wukangklan@wukangklan.tmi.twitch.tv PART #misteratombomb
+[03/24/2015 21:48:10]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :rubbing intensifies dizzyDoge
+[03/24/2015 21:48:24]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :wait howd he say lmao i didnt make him do that
+[03/24/2015 21:48:26]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :lmao
+[03/24/2015 21:48:31]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :howd you do that
+[03/24/2015 21:48:32]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :dude it was perfect
+[03/24/2015 21:48:36]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :i dont know
+[03/24/2015 21:48:53]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :its the greatest thing hecklebot has ever done
+[03/24/2015 21:49:03]: PING :tmi.twitch.tv
+[03/24/2015 21:49:03]: PONG
+[03/24/2015 21:49:03]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :someone hacked your irc
+[03/24/2015 21:49:11]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :no wait seriously wtf i didnt program that
+[03/24/2015 21:49:29]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :Richard_a_smasher: ayyRichard_a_smasher: lmao
+[03/24/2015 21:50:00]: :misteratombomb!misteratombomb@misteratombomb.tmi.twitch.tv PRIVMSG #misteratombomb :lmao
+[03/24/2015 21:50:05]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :scroll up
+[03/24/2015 21:50:31]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :numbuhfour is hecklebot learning?
+[03/24/2015 21:50:48]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :is he starting to evolve?
+[03/24/2015 21:50:53]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :they are fighting back
+[03/24/2015 21:50:59]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :run rum now
+[03/24/2015 21:51:06]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :Lol rum
+[03/24/2015 21:51:14]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :seriously wtf did you do im scared
+[03/24/2015 21:51:40]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :ayy
+[03/24/2015 21:51:44]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :lmao
+[03/24/2015 21:51:52]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :is one of his heckles lmao?
+[03/24/2015 21:51:58]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :could have been incredible timing?
+[03/24/2015 21:52:24]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :I wanted to replicate the situation but it didn't work
+[03/24/2015 21:53:03]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:53:03]: SENDING: PRIVMSG #misteratombomb :crad2014: crad2014 is the very best that no one ever was!
+
+[03/24/2015 21:53:08]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:53:08]: SENDING: PRIVMSG #misteratombomb :richard_a_smasher: You rolled a 5, failing to win. All bow to crad2014, our valiant king!
+
+[03/24/2015 21:53:11]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :yoy know it
+[03/24/2015 21:53:19]: PING :tmi.twitch.tv
+[03/24/2015 21:53:19]: PONG
+[03/24/2015 21:53:22]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :its not in his heckles list file...
+[03/24/2015 21:53:25]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:53:25]: SENDING: PRIVMSG #misteratombomb :numbuhfour: You rolled a 8, failing to win. Rejoice! Our valiant king crad2014 will lead us to prosperity!
+
+[03/24/2015 21:53:33]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :numbuhfour i'm scared
+[03/24/2015 21:53:38]: :numbuhfour!numbuhfour@numbuhfour.tmi.twitch.tv PRIVMSG #misteratombomb :its not in is faq responses file
+[03/24/2015 21:54:08]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :butthole is tightened now
+[03/24/2015 21:54:13]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :pls save me
+[03/24/2015 21:54:34]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :hecklebot pls don't hurt me.
+[03/24/2015 21:55:32]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:55:32]: SENDING: PRIVMSG #misteratombomb :poco9091: You rolled a 10, claiming victory over crad2014. All bow to poco9091, our valiant king!
+
+[03/24/2015 21:55:38]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :YESSSSSSSSSSS
+[03/24/2015 21:55:38]: :richard_a_smasher!richard_a_smasher@richard_a_smasher.tmi.twitch.tv PRIVMSG #misteratombomb :hecklebot? let us know if you are self aware
+[03/24/2015 21:55:40]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :Kappa
+[03/24/2015 21:55:45]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :!koth
+[03/24/2015 21:55:45]: SENDING: PRIVMSG #misteratombomb :crad2014: You rolled a 8, failing to win. Praise be unto poco9091, our valiant king!
+
+[03/24/2015 21:55:56]: :crad2014!crad2014@crad2014.tmi.twitch.tv PRIVMSG #misteratombomb :nooo fuck
+[03/24/2015 21:56:02]: :poco9091!poco9091@poco9091.tmi.twitch.tv PRIVMSG #misteratombomb :muahahahaha
+[03/24/2015 21:56:25]: SENDING: PRIVMSG #misteratombomb :MisterAtomBomb: If I was in a room with you, Hitler and Osama Bin Laden and I had a gun with two bullets I'd shoot you twice
+
