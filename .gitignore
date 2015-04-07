@@ -1,2 +1,5 @@
 log.txt
 oauth.txt
+money.txt
+
+*.log
