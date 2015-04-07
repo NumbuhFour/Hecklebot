@@ -29,7 +29,7 @@ class Hecklebot:
 	server = 'irc.twitch.tv'
 	password = 'rawr';
 	
-	logFileName = 'log.txt'
+	logFileName = 'log.log'
 	chatLogFileName = 'chatlog.txt'
 
 	queue = 13
