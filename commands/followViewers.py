@@ -10,6 +10,6 @@ class FollowViewers(Command):
 		pass
 	
 	def onJoin(self, user):
-		r = requests.put('https://api.twitch.tv/kraken/' + self.hb.nick + '/hecklebot/follows/channels/' + user + '?oauth_token=' + self.hb.password);
+		r = requests.put('https://api.twitch.tv/kraken/users/' + self.hb.nick + '/follows/channels/' + user + '?oauth_token=' + self.hb.password);
 		pass
 		
