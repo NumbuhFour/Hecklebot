@@ -7,6 +7,7 @@ from random import randint
 import time
 from urllib2 import HTTPError
 from urllib2 import URLError
+import traceback
 
 from commands.koth import Koth
 from commands.help import Help
@@ -66,6 +67,7 @@ class Hecklebot:
 		self.irc.send('USER ' + self.nick + ' 0 * : ' + self.bot_owner + '\r\n')
 		self.irc.send('NICK ' + self.nick + '\r\n')
 		self.irc.send('JOIN ' + self.channel + '\r\n')
+		self.irc.send('JOIN #' + self.nick.lower() + '\r\n')
 
 		self.log("Connected.")
 
@@ -153,6 +155,9 @@ class Hecklebot:
 			return None
 		except URLError as e:
 			self.log("URLError on fetch: "+ str(e) + " URL:" + str(url))
+			return None
+		except Error as e:
+			self.log("Unkown error: " + str(e) + " URL:" + str(url))
 			return None
 		return None
 
@@ -314,40 +319,48 @@ class Hecklebot:
 			incoming = self.irc.recv(1204)
 			print incoming
 			for data in incoming.split('\n'):
-				if len(data.strip()) == 0:
-					continue
-				self.log(data)
-				
-
-				if data.find('PRIVMSG') != -1:
-					message = data.split(':')[2]
-					user = data.split(':')[1]
-					user = user.split('!')[0]
-					self.takeMessage(user, message, conf)
-				
-				elif data.find('PING') != -1:
-					self.log('PONG')
-					self.irc.send(incoming.replace('PING','PONG')) #Responds to pings from server
-				
-				elif data.find('MODE') != -1: #Someone is  being opped or deopped
-					try:
-						self.handleMode(data)
-					except ValueError:
-						self.message(user + ": Invalid input")
+				try:
+					if len(data.strip()) == 0:
+						continue
+					if data.find('PONG') != -1:
+						self.log(data)
 					
-				elif data.find('PART') != -1: #Someone leaves
-					user = data.split(':')[1]
-					user = user.split('!')[0]
-					self.remViewer(user)
-				elif data.find('JOIN') != -1: #Someone joins
-					user = data.split(':')[1]
-					user = user.split('!')[0]
-					self.addViewer(user)
-							
-				elif data.find('353') != -1: #User listing:
-					list = data.split(':')[2]
-					for name in list.split(' '):
-						self.addViewer(name.strip()) #Get username
+
+					if data.find('PRIVMSG') != -1:
+						message = data.split(':')[2]
+						user = data.split(':')[1]
+						user = user.split('!')[0]
+						if(data.find('#' + self.nick.lower()) != -1 and user != 'numbuhfour'): 
+							continue
+						self.takeMessage(user, message, conf)
+					
+					elif data.find('PING') != -1:
+						# self.log('PONG')
+						self.irc.send(incoming.replace('PING','PONG')) #Responds to pings from server
+						
+					elif data.find('#' + self.nick.lower()) != -1:
+						continue
+					elif data.find('MODE') != -1: #Someone is  being opped or deopped
+						try:
+							self.handleMode(data)
+						except ValueError:
+							self.message(user + ": Invalid input")
+						
+					elif data.find('PART') != -1: #Someone leaves
+						user = data.split(':')[1]
+						user = user.split('!')[0]
+						self.remViewer(user)
+					elif data.find('JOIN') != -1: #Someone joins
+						user = data.split(':')[1]
+						user = user.split('!')[0]
+						self.addViewer(user)
+								
+					elif data.find('353') != -1: #User listing:
+						list = data.split(':')[2]
+						for name in list.split(' '):
+							self.addViewer(name.strip()) #Get username
+				except:
+					traceback.print_exc()
 
 hb = Hecklebot()
 hb.start()
