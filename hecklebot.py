@@ -18,6 +18,7 @@ from commands.giveaway import Giveaway
 from commands.money import Money
 from commands.loyalty import Loyalty
 from commands.followViewers import FollowViewers
+from commands.evalCmd import EvalCMD
 
 true = True
 false = False
@@ -75,17 +76,20 @@ class Hecklebot:
 	
 	def initCommands(self):
 		self.money = Money(self)
-		
+		self.koth = Koth(self)
+		self.heckleme = Heckleme(self)
+		self.info = Info(self)
 		self.commands.append(Help(self))
-		self.commands.append(Heckleme(self))
-		self.commands.append(Koth(self))
+		self.commands.append(self.heckleme)
+		self.commands.append(self.koth)
 		self.commands.append(GreetFollowers(self))
 		self.commands.append(Giveaway(self))
 		self.commands.append(self.money)
 		self.commands.append(Loyalty(self))
 		self.commands.append(FollowViewers(self))
+		self.commands.append(EvalCMD(self))
 		
-		self.commands.append(Info(self)) #perhaps last will prevent it from overriding actual commands?
+		self.commands.append(self.info) #perhaps last will prevent it from overriding actual commands?
 	
 	def start(self):
 		self.queuetimer()
