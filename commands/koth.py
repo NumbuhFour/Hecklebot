@@ -98,11 +98,12 @@ class Koth(Command):
 		if user in self.kothTrack:
 			userTime = self.kothTrack[user]
 		
+		if user == self.koth.lower(): #Already king
+			self.hb.message(user + ": " + self.praiseKing(self.koth))
+			return
+
 		curTime = round(time.time()) 
 		if (curTime-userTime) > self.kothDelay:
-			if user == self.koth.lower(): #Already king
-				self.hb.message(user + ": " + self.praiseKing(self.koth))
-				return
 			
 			roll = randint(1,6) + randint(1,6)
 			if roll >= 10: #Victory
