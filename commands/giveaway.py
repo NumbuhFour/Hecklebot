@@ -11,12 +11,14 @@ class Giveaway(Command):
 	currentLeader = "no one"
 	currentBid = 0
 	auctionStarted = 0
+	bucket = []
+	bucketStarted = False
 
 	def __init__(self, hb):
 		self.hb = hb
 		self.money = self.hb.money
-		self.helpString = "*!giveaway [viewers] [followers] [subscribers]: Pick a person for the giveaway ######## *!startAuction [startingBid] [seconds] [prize]: Start a monies auction for the prize ######## *!cancelAuction: Cancels the current auction";
-		self.publicHelpString = "!bid [amount]: Bid for the current auction"
+		self.helpString = "*!startgiveaway: Clears the names currently in the giveaway bucket ######## *!giveaway [viewers] [followers] [subscribers] [bucket]: Pick a person for the giveaway ######## *!startAuction [startingBid] [seconds] [prize]: Start a monies auction for the prize ######## *!cancelAuction: Cancels the current auction";
+		self.publicHelpString = "!pickme: Add yourself to the bucket for the next giveaway ######## !bid [amount]: Bid for the current auction"
 		pass
 		
 	def writeConf(self, conf):
@@ -30,11 +32,17 @@ class Giveaway(Command):
 		isOp = self.hb.isOp(user)
 		if lower.find('!bid ') == 0:
 			return True
+		if lower.find('!pickme') == 0:
+			return True
+		elif lower.find('!unpickme') == 0:
+			return True
 		elif lower.find('!giveaway ') == 0 and isOp == True:
 			return True
 		elif lower.find('!startauction ') == 0 and isOp == True:
 			return True
 		elif lower.find('!cancelauction') == 0 and isOp == True:
+			return True
+		elif lower.find('!startgiveaway') == 0 and isOp == True:
 			return True
 		else:
 			return False
@@ -47,6 +55,18 @@ class Giveaway(Command):
 				self.bid(user, amount)
 			except ValueError:
 				pass
+		elif lower.find('!pickme') == 0 and not (user in self.bucket):
+			if self.bucketStarted == False:
+				self.hb.message(user + ": The giveaway hasn't started yet!")
+			else:
+				self.bucket.append(user)
+		elif lower.find('!unpickme') == 0 and user in self.bucket:
+			self.hb.message(user + ": You've been removed from the pool!")
+			self.bucket.remove(user)
+		elif lower.find('!startgiveaway') == 0:
+			self.bucketStarted = True
+			self.bucket = []
+			self.hb.message('A givaway begins! Type !pickme to put your name in the pool!')
 		elif lower.find('!giveaway ') == 0:
 			pool = []
 			if lower.find('followers') != -1:
@@ -63,9 +83,19 @@ class Giveaway(Command):
 					self.hb.message(user + ": Error fetching followers. Try again in a bit.")
 					return
 				pool += sub
+			if lower.find('bucket') != -1 or lower.find('pool') != -1:
+				pool += self.bucket
+
+			if self.hb.streamer in pool: # remove streamer
+				pool.remove(self.hb.streamer)
+
 			pool = list(set(pool)) #remove duplicates
 			print pool
-			self.hb.message("{0}: And the winner is...... {1}!".format(user, pool[randint(0,len(pool)-1)]))
+			if len(pool) == 0:
+				self.hb.message("There's no one for me to pick from in that category!")
+			else:
+				self.hb.message("{0}: And the winner is...... {1}!".format(user, pool[randint(0,len(pool)-1)]))
+				self.bucketStarted = False
 			#return
 		elif lower.find('!startauction ') == 0:
 			split = message.split(' ')
