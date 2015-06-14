@@ -9,7 +9,7 @@ class Heckleme(Command):
 	
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "*!addHeckle [heckle]: Add a heckle ######### *!refreshHeckles: Refreshes heckles from file ######## !setHeckleTimer [minutes]: Sets delay for the auto-heckle";
+		self.helpString = "*!addHeckle [heckle]: Add a heckle ### *!refreshHeckles: Refreshes heckles from file ### !setHeckleTimer [minutes]: Sets delay for the auto-heckle";
 		self.publicHelpString = "!heckleme: Treats your masochistic desires"
 		self.heckleTimerCountdown = 0
 		

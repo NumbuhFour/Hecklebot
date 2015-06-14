@@ -5,7 +5,7 @@ class Info(Command):
 	fileName = "info.txt"
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "*!addInfo [cmd] [message]: Add a FAQ message to auto-respond to ######## *!removeInfo [cmd]: Removes a FAQ message";
+		self.helpString = "*!addInfo [cmd] [message]: Add a FAQ message to auto-respond to ### *!removeInfo [cmd]: Removes a FAQ message";
 		pass
 		
 	def writeConf(self, conf):
@@ -57,11 +57,19 @@ class Info(Command):
 		self.cmds = json.loads(f.read());
 		f.close();
 		print('loading Info ' + str(self.cmds))
+		self.reloadHelpString()
 
 	def saveInfo(self):
 		with open(self.fileName, 'w') as outfile: 
 			json.dump(self.cmds,outfile)
 			outfile.close()
+		self.reloadHelpString() # Do it in both because we save after changing them elsewhere
+	
+	def reloadHelpString(self):
+		self.publicHelpString = ""
+		for key in self.cmds:
+			self.publicHelpString += "!" + key + " ### "
+		
 			
 			'''
 			

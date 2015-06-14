@@ -11,8 +11,8 @@ class Money(Command):
 	def __init__(self, hb):
 		self.hb = hb
 		self.helpString = "*!give [target] [amount]: Grants target user x monies"
-		self.publicHelpString = "!balance: Prints out your current balance ######## !pay [target] [amount]: Pays target x monies from your account ######## [user]++ : Grant a user " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + " for being awesome ######## [user]-- : Deducts " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + "from a user for being not awesome "
-		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ######## *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes";
+		self.publicHelpString = "!balance: Prints out your current balance ### !pay [target] [amount]: Pays target x monies from your account ### [user]++ : Grant a user " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + " for being awesome ### [user]-- : Deducts " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + "from a user for being not awesome "
+		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ### *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes";
 		pass
 		
 	def writeConf(self, conf):

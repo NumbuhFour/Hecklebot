@@ -10,7 +10,7 @@ class Koth(Command):
 	kothTrack = {}
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "*!toggleKOTH: Toggles king of the hill ####### *!addPraise [praise]: Add a praise to the king! Use @user@ for name ######## *!setKOTHDelay [seconds]: Sets seconds between koth rolls";
+		self.helpString = "*!toggleKOTH: Toggles king of the hill ### *!addPraise [praise]: Add a praise to the king! Use @user@ for name ### *!setKOTHDelay [seconds]: Sets seconds between koth rolls";
 		self.publicHelpString = "!koth: Roll to take the kingdom! 10 or more to win"
 		pass
 		

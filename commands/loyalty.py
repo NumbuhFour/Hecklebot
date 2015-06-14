@@ -8,7 +8,7 @@ class Loyalty(Command):
 	def __init__(self, hb):
 		self.hb = hb
 		self.money = self.hb.money
-		self.helpString = "*!setMoneyPerStream [amount]: Sets amount received for viewing a stream ######## *!resetStreamTracking: Resets stream tracking for monies distribution"
+		self.helpString = "*!setMoneyPerStream [amount]: Sets amount received for viewing a stream ### *!resetStreamTracking: Resets stream tracking for monies distribution"
 		pass
 		
 	def writeConf(self, conf):

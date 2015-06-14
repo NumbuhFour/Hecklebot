@@ -25,14 +25,14 @@ false = False
 
 class Hecklebot:
 	bot_owner = 'Numbuhfour'
-	streamer = 'misteratombomb'
-	nick = 'Hecklebot'
-	channel = '#misteratombomb'
+	streamer = 'altaswolf'
+	nick = 'AltasROWBot'
+	channel = '#altaswolf'
 	server = 'irc.twitch.tv'
 	password = 'rawr';
 	
 	logFileName = 'log.log'
-	chatLogFileName = 'chatlog.txt'
+	chatLogFileName = 'altaschatlog.txt'
 
 	queue = 13
 
@@ -75,18 +75,9 @@ class Hecklebot:
 		self.isStreaming = True
 	
 	def initCommands(self):
-		self.money = Money(self)
-		self.koth = Koth(self)
-		self.heckleme = Heckleme(self)
 		self.info = Info(self)
 		self.commands.append(Help(self))
-		self.commands.append(self.heckleme)
-		self.commands.append(self.koth)
-		self.commands.append(GreetFollowers(self))
 		self.commands.append(Giveaway(self))
-		self.commands.append(self.money)
-		self.commands.append(Loyalty(self))
-		self.commands.append(FollowViewers(self))
 		self.commands.append(EvalCMD(self))
 		
 		self.commands.append(self.info) #perhaps last will prevent it from overriding actual commands?

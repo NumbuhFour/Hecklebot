@@ -6,7 +6,7 @@ class LinkStreamer(Command):
 	fileName = "streamerlinks.txt"
 	def __init__(self, hb):
 		self.hb = hb
-		self.publicHelpString = "!addMyStream [Blurb]: Add your username to hecklebot's linking repertoire ######## !removeMyStream: Removes your stream from hecklebot's linking repertoire";
+		self.publicHelpString = "!addMyStream [Blurb]: Add your username to hecklebot's linking repertoire ### !removeMyStream: Removes your stream from hecklebot's linking repertoire";
 		pass
 		
 	def writeConf(self, conf):

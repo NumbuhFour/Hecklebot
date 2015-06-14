@@ -14,7 +14,7 @@ class Help(Command):
 		
 	def checkMessage(self, message, user):
 		message = message.strip().lower()
-		if(message == "!help"):
+		if(message == "!help" or message == "!commands"):
 			return True
 		else:
 			return False
@@ -25,11 +25,11 @@ class Help(Command):
 		for cmd in self.hb.commands:
 			pubHelp = cmd.publicHelpString
 			if pubHelp != "":
-				output += pubHelp + " ######## "
+				output += pubHelp + " ### "
 			if isOp == True:
 				help = cmd.helpString
 				if help != "":
-					output += help + " ######## "
+					output += help + " ### "
 					
 			if(len(output) > 800):
 				self.hb.message(user + ": " + output)

@@ -6,7 +6,7 @@ class FollowViewers(Command):
 	#fileName = "streamPaymentTracker.txt"
 	def __init__(self, hb):
 		self.hb = hb
-		#self.helpString = "*!setMoneyPerStream [amount]: Sets amount received for viewing a stream ######## *!resetStreamTracking: Resets stream tracking for monies distribution"
+		#self.helpString = "*!setMoneyPerStream [amount]: Sets amount received for viewing a stream ### *!resetStreamTracking: Resets stream tracking for monies distribution"
 		pass
 	
 	def onJoin(self, user):
