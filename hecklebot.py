@@ -44,6 +44,8 @@ class Hecklebot:
 	
 	stop = False
 	
+	doLog = False
+	
 	def __init__(self):
 		self.oauthFile = open('oauth.txt','r');
 		self.password = self.oauthFile.read();
@@ -107,6 +109,7 @@ class Hecklebot:
 		self.nick = self.conf['bot']['nick']
 		self.channel = '#' + self.streamer.lower()
 		self.server = self.conf['bot']['server']
+		self.doLog = self.conf['bot']['log']
 		
 		self.logFileName = self.conf['files']['log']
 		self.chatLogFileName = self.conf['files']['chatlog']
@@ -127,18 +130,20 @@ class Hecklebot:
 
 
 	def log(self,msg):
-		time = datetime.datetime.now().strftime("[%m/%d/%Y %H:%M:%S]: ")
-		self.logfile.write(time + msg + "\n")
-		print time+msg
+		if(self.doLog):
+			time = datetime.datetime.now().strftime("[%m/%d/%Y %H:%M:%S]: ")
+			self.logfile.write(time + msg + "\n")
+			print time+msg
 		
 
 		
 
 	def writeToChatLog(self,msg):
-		chatfile = open(self.chatLogFileName,'a')
-		time = datetime.datetime.now().strftime("[%m/%d/%Y %H:%M:%S]: ")
-		chatfile.write(time + msg + "<br />")
-		chatfile.close()
+		if(self.doLog):
+			chatfile = open(self.chatLogFileName,'a')
+			time = datetime.datetime.now().strftime("[%m/%d/%Y %H:%M:%S]: ")
+			chatfile.write(time + msg + "<br />")
+			chatfile.close()
 
 	def fetchJSON(self, url):
 		try:

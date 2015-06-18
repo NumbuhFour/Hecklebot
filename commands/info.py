@@ -18,18 +18,23 @@ class Info(Command):
 		
 	def checkMessage(self, message, user):
 		message = message.strip().lower()
+		isOp = self.hb.isOp(user)
 		if message.find('!addinfo') == 0 or message.find('!removeinfo') == 0: #Admin command
+			return True
+		if message.find('!refreshinfo') == 0 and isOp:
 			return True
 		if message.find('!') != -1:
 			for key in self.cmds:
 				if message.find('!' + key.lower()) != -1:
 					return True;
-		
 		return False
 		
 	def onMessage(self, message, user):
 		message = message.strip()
 		lower = message.lower()
+		if lower.find('!refreshinfo') == 0:
+			self.hb.message(user + ": FAQ refreshed!")
+			self.loadInfo()
 		if lower.find('!addinfo') == 0 or lower.find('!removeinfo') == 0: #Admin command
 			if self.hb.isOp(user) == True:
 				if lower.find('!addinfo ') == 0:
