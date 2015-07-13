@@ -1,5 +1,6 @@
 import socket
 import threading
+import thread
 import datetime
 from urllib2 import urlopen
 import json
@@ -8,6 +9,7 @@ import time
 from urllib2 import HTTPError
 from urllib2 import URLError
 import traceback
+import sys
 
 from commands.koth import Koth
 from commands.help import Help
@@ -19,6 +21,7 @@ from commands.money import Money
 from commands.loyalty import Loyalty
 from commands.followViewers import FollowViewers
 from commands.evalCmd import EvalCMD
+from commands.betting import Betting
 
 true = True
 false = False
@@ -41,10 +44,17 @@ class Hecklebot:
 	oauthFile = ""
 	
 	commands = []
+	disabledCommands = []
 	
 	stop = False
 	
 	doLog = False
+	
+	running = True
+	
+	threads = [None, None]
+	
+	debug = False
 	
 	def __init__(self):
 		self.oauthFile = open('oauth.txt','r');
@@ -61,6 +71,11 @@ class Hecklebot:
 
 		self.stop = False
 
+		if len(sys.argv) > 1 and sys.argv[1] == "debug":
+			print "########## DEBUGGING ACTIVATED ##########"
+			self.debug = True
+			self.channel = "#" + self.bot_owner.lower()
+		
 		self.log("Connecting...")
 
 		self.irc = socket.socket()
@@ -69,6 +84,7 @@ class Hecklebot:
 		self.irc.send('PASS oauth:' + self.password + '\r\n')
 		self.irc.send('USER ' + self.nick + ' 0 * : ' + self.bot_owner + '\r\n')
 		self.irc.send('NICK ' + self.nick + '\r\n')
+		self.irc.send('CAP REQ :twitch.tv/commands\r\n')
 		self.irc.send('JOIN ' + self.channel + '\r\n')
 		self.irc.send('JOIN #' + self.nick.lower() + '\r\n')
 
@@ -78,8 +94,11 @@ class Hecklebot:
 	
 	def initCommands(self):
 		self.info = Info(self)
+		self.money = Money(self)
 		self.commands.append(Help(self))
+		self.commands.append(self.money)
 		self.commands.append(Giveaway(self))
+		self.commands.append(Betting(self))
 		self.commands.append(EvalCMD(self))
 		
 		self.commands.append(self.info) #perhaps last will prevent it from overriding actual commands?
@@ -88,17 +107,31 @@ class Hecklebot:
 		self.queuetimer()
 		for c in self.commands:
 			c.start() #Start threads (if applicable)
+			
+		self.checkStreamTimer()
 
+		thread.start_new_thread(self.readTerminal, ())
+		
+		self.checkViewers()
 		try:
 			self.run(self.conf)
 		except KeyboardInterrupt:
-			self.stop = True
+			self.doStop()
 
-		self.log("Quitting.")
+		#self.log("Quitting.")
 			
 		self.stop = True
 		self.logfile.close()
 		
+	def doStop(self):
+		self.log("Stopping...")
+		self.stop = True
+		for c in self.commands:
+			c.stop() #stop threads (if applicable)
+		for th in self.threads:
+			th.cancel()
+		self.irc.shutdown(socket.SHUT_RDWR)
+		self.irc.close()
 	
 	def loadSettings(self):
 		f = open('heckle.config','r')
@@ -114,12 +147,11 @@ class Hecklebot:
 		self.logFileName = self.conf['files']['log']
 		self.chatLogFileName = self.conf['files']['chatlog']
 		
-		
 		for c in self.commands:
 			c.readFromConf(self.conf)
 	
 	def saveSettings(self):
-		self.conf = { 'bot':{ 'owner':self.bot_owner, 'streamer':self.streamer, 'nick':self.nick, 'server':self.server }, 'files':{ 'log':self.logFileName, 'chatlog':self.chatLogFileName } }
+		self.conf = { 'bot':{"log":self.doLog, 'owner':self.bot_owner, 'streamer':self.streamer, 'nick':self.nick, 'server':self.server }, 'files':{ 'log':self.logFileName, 'chatlog':self.chatLogFileName } }
 		
 		for c in self.commands:
 			c.writeConf(self.conf)
@@ -172,6 +204,12 @@ class Hecklebot:
 		else:
 			self.log("Queue overflow. [" + msg + "] ignored.")
 
+	def whisper(self,msg, target):
+		tosend = 'PRIVMSG #jtv :/w ' + target + ' ' + msg + '\r\n'
+		self.irc.send(tosend)
+		self.log("WHISPERING: " + tosend)
+		self.writeToChatLog('[whisper@' + target + '] ' + self.nick + ": " + msg)
+		
 	def checkStreamOnline(self):
 		data = self.fetchJSON('https://api.twitch.tv/kraken/streams/' + self.streamer)
 		if data == None:
@@ -265,28 +303,72 @@ class Hecklebot:
 		
 		self.queue = 0
 		if self.stop == False:
-			threading.Timer(10,self.queuetimer).start()
+			self.threads[0] = threading.Timer(10,self.queuetimer)
+			self.threads[0].start()
 
-	def isOp(self, user):
-		return user in self.ops or user.lower() == self.bot_owner.lower() or user.lower() == self.streamer.lower()
+	def checkStreamTimer(self):
+		self.checkStreamOnline()
+		if self.stop == False:
+			self.threads[1] = threading.Timer(10, self.checkStreamTimer)
+			self.threads[1].start()
 		
+	def isOp(self, user):
+		self.checkViewers()
+		return self.quickIsOp(user)
+	
+	def quickIsOp(self, user):
+		return user in self.ops or user.lower() == self.bot_owner.lower() or user.lower() == self.nick.lower() or user.lower() == self.streamer.lower()
+		
+	def checkViewers(self):
+		data = self.fetchJSON('https://tmi.twitch.tv/group/user/' + self.streamer + '/chatters')
+		self.ops = []
+		for name in data['chatters']['moderators']:
+			if (isinstance(name,basestring)):
+				self.ops.append(name)
+				
+		lastViewers = self.viewers
+		self.viewers = []
+		for name in data['chatters']['moderators']:
+			if (isinstance(name,basestring)):
+				self.viewers.append(name)
+		for name in data['chatters']['staff']:
+			if (isinstance(name,basestring)):
+				self.viewers.append(name)
+		for name in data['chatters']['admins']:
+			if (isinstance(name,basestring)):
+				self.viewers.append(name)
+		for name in data['chatters']['global_mods']:
+			if (isinstance(name,basestring)):
+				self.viewers.append(name)
+		for name in data['chatters']['viewers']:
+			if (isinstance(name,basestring)):
+				self.viewers.append(name)
+		
+		for name in lastViewers:
+			if not(name in self.viewers):
+				self.remViewer(name)
+		for name in self.viewers:
+			if not(name in lastViewers):
+				self.addViewer(name)
+	
 	def addViewer(self, user):
 		self.writeToChatLog("**JOIN** " + user + " has joined.")
-		if ~(user in self.viewers) and user != 'hecklebot':
-			print("[off]: ADD USER " + user)
-			self.viewers.append(user)
-			for c in self.commands:
-				c.onJoin(user)
+		#if ~(user in self.viewers) and user != 'hecklebot':
+		print("[off]: ADD USER " + user)
+		#self.viewers.append(user)
+		for c in self.commands:
+			c.onJoin(user)
 		
 	def remViewer(self, user):
 		self.writeToChatLog("**PART** " + user + " has left.")
-		if (user in self.viewers):
-			print("[off]: REM USER " + user)
-			self.viewers.remove(user)
-			for c in self.commands:
-				c.onPart(user)
+		#if (user in self.viewers):
+		print("[off]: REM USER " + user)
+		#self.viewers.remove(user)
+		for c in self.commands:
+			c.onPart(user)
 	
 	def isOnline(self,user):
+		self.checkViewers()
 		if (user in self.viewers): 
 			return True
 		return False
@@ -315,7 +397,7 @@ class Hecklebot:
 			self.ops.remove(user)
 
 	def run(self, conf):
-		while True:
+		while self.running:
 			incoming = self.irc.recv(1204)
 			print incoming
 			for data in incoming.split('\n'):
@@ -327,13 +409,14 @@ class Hecklebot:
 					
 
 					if data.find('PRIVMSG') != -1:
-						message = data.split(':')[2]
+						message = data[data[2:].find(':')+3:] # Everything after the second :
 						user = data.split(':')[1]
 						user = user.split('!')[0]
 						if(data.find('#' + self.nick.lower()) != -1 and user != 'numbuhfour'): 
 							continue
 						self.takeMessage(user, message, conf)
-					
+					elif data.find('WHISPER') != -1:
+						print("WHISPER")
 					elif data.find('PING') != -1:
 						# self.log('PONG')
 						self.irc.send(incoming.replace('PING','PONG')) #Responds to pings from server
@@ -361,6 +444,71 @@ class Hecklebot:
 							self.addViewer(name.strip()) #Get username
 				except:
 					traceback.print_exc()
+	def readTerminal(self):
+		while(self.running):
+			input = raw_input()
+			if(input == "save"):
+				self.saveSettings()
+				self.log("Settings saved")
+			elif(input == "exit"):
+				self.running = False
+				self.doStop()
+				for th in self.threads :
+					th.cancel()
+			elif(input == "reload"):
+				self.loadSettings()
+				self.log("Settings reloaded")
+			elif(input.find("say") == 0):
+				self.message(input[4:])
+			elif(input.find("whisper") == 0):
+				split = input.split(" ")
+				target = split[1]
+				message = input[(len(target)+len("whisper")+2):]
+				self.whisper(message,target)
+			elif(input == "isonline"):
+				print "Was " + str(self.isStreaming)
+				print "Is now " + str(self.checkStreamOnline())
+			elif(input.find("payall") == 0):
+				split = input.split(" ")
+				num = 1
+				if(len(split) > 1):
+					num = int(split[1])
+				print("Paying everyone " + str(num))
+				self.checkViewers()
+				for viewer in self.viewers:
+					self.money.pay(viewer,num)
+			elif input.find("enable ") == 0:
+				split = input.lower().split(' ')
+				for i in range(1, len(split)):
+					cmdName = split[i]
+					found = False
+					for cmd in self.disabledCommands:
+						if(cmd.getName().lower() == cmdName):
+							print "Enabling " + cmdName
+							self.commands.append(cmd)
+							self.disabledCommands.remove(cmd)
+							found = True
+							break
+					if not found:
+						print "Unable to enable " + cmdName
+			elif input.find("disable ") == 0:
+				split = input.lower().split(' ')
+				for i in range(1, len(split)):
+					cmdName = split[i]
+					found = False
+					for cmd in self.commands:
+						if(cmd.getName().lower() == cmdName):
+							print "Disabling " + cmdName
+							self.disabledCommands.append(cmd)
+							self.commands.remove(cmd)
+							found = True
+							break
+					if not found:
+						print "Unable to disable " + cmdName
+			else:
+				for cmd in self.commands:
+					if cmd.onTerminalCommand(input) == True :
+						break
 
 hb = Hecklebot()
 hb.start()

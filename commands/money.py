@@ -1,20 +1,29 @@
 from command import Command
 import json
 import time
+import threading
+
 class Money(Command):
 	fileName = 'money.txt'
 	bank = {}
 	karmaTimer = {}
 	karmaPerVote = 1
-	voteDelay = 20
+	voteDelay = 10*60
+	payPerViewDelay = 45*60 # How often in seconds currency is distributed
+	karmaGiveLimit = 5
+	
+	moneyString = "Oreos"
+	karmaString = "Warm Fuzzies"
+	
+	streamThreadRunning = False
+	streamThread = None
 	
 	def __init__(self, hb):
 		self.hb = hb
-		self.helpString = "*!give [target] [amount]: Grants target user x monies"
-		self.publicHelpString = "!balance: Prints out your current balance ### !pay [target] [amount]: Pays target x monies from your account ### [user]++ : Grant a user " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + " for being awesome ### [user]-- : Deducts " + str(self.karmaPerVote) + " point" + ("s" if self.karmaPerVote==1 else "") + "from a user for being not awesome "
-		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ### *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes";
+		self.publicHelpString = "!balance: Prints out your current balance ### !pay [target] [amount]: Pays target x monies from your account ### [user]++ : Grant a user " + str(self.karmaPerVote) + " " + self.karmaString + " for being awesome ### !top: Shows the top 5 " + self.karmaString + " earners "
+		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ### *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes ### *!grant [target] [amount]: Grants target user x monies";
 		pass
-		
+	
 	def writeConf(self, conf):
 		conf['money'] = {}
 		conf['money']['fileName'] = self.fileName
@@ -23,22 +32,21 @@ class Money(Command):
 		pass
 	
 	def readFromConf(self, conf):
-		self.fileName = conf['money']['fileName']
-		self.voteDelay = conf['money']['upvoteDelay']
-		self.karmaPerVote = conf['money']['moneyPerVote']
-		self.loadBankFile()
+		if('money' in conf):
+			self.fileName = conf['money']['fileName']
+			self.voteDelay = conf['money']['upvoteDelay']
+			self.karmaPerVote = conf['money']['moneyPerVote']
+			self.loadBankFile()
 		pass
 		
 	def checkMessage(self, message, user):
 		lower = message.strip().lower()
-		if lower.find('!bal') != -1 or lower.find('!pay ') == 0:
+		if lower.find('!bal') != -1 or lower.find('!pay ') == 0  or lower.find('!give ') == 0 or lower.find('!top') != -1:
 			return True
 		elif lower.find('++') != -1:
 			return True;
-		elif lower.find('--') != -1:
-			return True;
 		elif self.hb.isOp(user) == True:
-			if lower.find('!give ') == 0:
+			if lower.find('!grant ') == 0:
 				return True
 			if lower.find('!setupvoteamount ') == 0:
 				return True
@@ -49,62 +57,98 @@ class Money(Command):
 		
 	def onMessage(self, msg, user):
 		lower = msg.strip().lower()
-		if lower.find('!bal') != -1:
+		if lower.find('!top') != -1:
+			sort = sorted(self.bank, key=lambda x: self.bank[x]['karma'], reverse=True)
+			viewerOnly = lower.find('view') != -1
+			output = ""
+			index = 0
+			for i in range(min(5,len(sort))):
+				entry = self.bank[sort[index]]
+				while(viewerOnly and index < len(sort) and self.hb.quickIsOp(entry['name'])):
+					index += 1
+					entry = self.bank[sort[index]]
+				if viewerOnly and self.hb.quickIsOp(entry['name']):
+					break;
+				output += "#" + str(i+1) + ") " + entry['name'] + " with " + str(entry["karma"]) + " &nbsp; &nbsp; "
+				index += 1
+			self.hb.message(user + ": The top " + self.karmaString + " earners are &nbsp;" + output)
+			pass
+		elif lower.find('!bal') != -1:
 			if len(self.hb.viewers) == 0:
 				self.hb.message(user + ": Give me a sec, I just woke up!")
 			else:
-				self.hb.message(user + ": You currently have " + str(self.checkBalance(user)) + " monies.")
+				self.hb.message(user + ": You currently have " + str(self.checkBalance(user)["money"]) + " " + self.moneyString + " and have earned " + str(self.checkBalance(user)["karma"]) + " " + self.karmaString + ".")
 		elif lower.find('++') != -1:
 			curTime = time.time()
-			if (user in self.karmaTimer) == False or curTime-self.karmaTimer[user] > self.voteDelay:
+			given = 0
+			if (user in self.karmaTimer) == False or (self.karmaTimer[user]['points'] < self.karmaGiveLimit):
 				split = lower.split(' ')
-				for t in split:
-					if t.find('++') == (len(t)-2) and len(t) > 2: #Check if at end
+				for iter in range(0,len(split)):
+					t = split[iter]
+					name = ''
+					if t == '++' and iter != 0: # In case its formatted "name ++" with a space
+						name = split[iter-1]
+					elif t.find('++') == (len(t)-2) and len(t) > 2: #Check if at end and not alone
 						name = t[:-2]
-						if name == user:
-							self.hb.message(user + ": You can't upvote yourself!")
-							break
-						elif self.checkBalance(name) != None:
-							self.pay(name, self.karmaPerVote)
-							self.karmaTimer[user] = curTime
-							break
-				pass
-		elif lower.find('--') != -1:
-			curTime = time.time()
-			if (user in self.karmaTimer) == False or curTime-self.karmaTimer[user] > self.voteDelay:
-				split = lower.split(' ')
-				for t in split:
-					if t.find('--') == (len(t)-2) and len(t) > 2: #Check if at end
-						name = t[:-2]
-						if self.checkBalance(name) != None:
-							self.pay(name, -self.karmaPerVote)
-							self.karmaTimer[user] = curTime
-							break
-				pass
-		elif lower.find('!pay ') == 0:
+					
+					if (name.find('@') == 0):
+						name = name[1:]
+					if(name.find('+') != -1):
+						break;
+					
+					if name == user:
+						self.hb.message(user + ": Narcissism can only get you so far!")
+						break
+					elif name != '' and self.checkBalance(name) != None:
+						giveValid = True
+						#
+						if((user in self.karmaTimer) == False): # Not in the slowing tracker list
+							self.karmaTimer[user] = {'time':curTime, 'points':1}
+						elif(self.karmaTimer[user]['points'] < self.karmaGiveLimit): # Has not given their limit
+							self.karmaTimer[user]['points'] += 1
+						elif(curTime-self.karmaTimer[user]['time'] > self.voteDelay and given < self.karmaGiveLimit): # Has given their limit, but they've waited (and not gone over in this single string)
+							self.karmaTimer[user] = {'time':curTime, 'points':1}
+						else:
+							giveValid = False
+						
+						if (giveValid == True):
+							given += 1
+							self.upvote(name, self.karmaPerVote)
+						else:
+							self.hb.message(user + ": You can only give out " + str(self.karmaGiveLimit) + " " + self.karmaString + " every " + str(self.voteDelay/1000) + " seconds!")
+							pass
+			if (given > 0):
+				self.karmaTimer[user]['time'] = curTime
+			pass
+		elif lower.find('!pay ') == 0 or lower.find('!give ') == 0:
 			split = msg.split(' ')
-			if len(split) == 3:
+			if len(split) >= 3:
 				amt = split[2]
-				target = split[1]
+				target = split[1].lower()
 				if target == user:
 					self.hb.message(user + ": You can't pay yourself!")
 				else:
 					try: 
 						amount = int(amt)
-						bal = self.checkBalance(user)
-						if amount > bal:
+						bal = self.checkBalance(user)["money"]
+						if target.find('@') != -1:
+							target = target[1:]
+
+						if amount <= 0:
+							self.hb.message(user + ": You must pay a positive amount!")
+						elif amount > bal:
 							self.hb.message(user + ": You don't have enough!")
-						elif checkUser(target) == False:
+						elif not (target in self.bank):
 							self.hb.message(user + ": Target does not exist!")
 						else:
-							self.hb.message(user + ": Paying " + target + " " + str(amount) + " monies.")
+							self.hb.message(user + ": Paying " + target + " " + str(amount) + " " + self.moneyString + ".")
 							self.pay(target, amount)
 							self.pay(user, -amount)
 					except ValueError:
 						pass
 
 		if(self.hb.isOp(user) == True):
-			if lower.find('!give ') == 0:
+			if lower.find('!grant ') == 0:
 				split = msg.split(' ')
 				if len(split) >= 3:
 					amt = split[2]
@@ -114,7 +158,7 @@ class Money(Command):
 						if self.checkUser(target) == False:
 							self.hb.message(user + ": Target does not exist!")
 						else:
-							self.hb.message(user + ": Giving " + target + " " + str(amount) + " monies.")
+							self.hb.message(user + ": Giving " + target + " " + str(amount) + " " + self.moneyString + ".")
 							self.pay(target, amount)
 					except ValueError:
 						self.hb.message(user + ": Error giving money.")
@@ -146,13 +190,15 @@ class Money(Command):
 		
 	
 	def checkBalance(self,user):
-		if(user.lower() in self.bank) == False and self.hb.isOnline(user) == True:
+		if(user.lower() in self.bank) == False: # and self.hb.isOnline(user) == True:
 			print user + " not found, adding"
-			self.bank[user.lower()] = 0
+			self.bank[user.lower()] = {"money":0, "karma":0, "name":user}
 			self.saveBankFile()
 		#elif self.hb.isOnline(user) == False:
 		#	print user + " not online"
 		#	return 0
+		# print ("Derp " + str(user.lower() in self.bank))
+		# print ("What " + str(self.bank))
 		
 		return self.bank[user.lower()]
 	
@@ -173,11 +219,57 @@ class Money(Command):
 		
 	def pay(self, user, amount):
 		if self.checkBalance(user) != None:
-			self.bank[user.lower()] += amount
+			self.bank[user.lower()]['money'] += amount
+			self.saveBankFile()
+	def upvote(self, user, amount):
+		if self.checkBalance(user) != None:
+			self.bank[user.lower()]['karma'] += amount
 			self.saveBankFile()
 		
 	def onJoin(self, user):
 		self.checkBalance(user)
+		
+	def onStreamBegin(self):
+		if(not self.streamThreadRunning):
+			print("Starting money pay thread")
+			self.streamThreadRunning = True
+			self.streamThread = threading.Timer(self.payPerViewDelay,self.tickMoney)
+			self.streamThread.start()
+		pass
+	
+	def start(self):
+		if(not self.streamThreadRunning):
+			print("Starting money pay thread")
+			self.streamThreadRunning = True
+			self.streamThread = threading.Timer(self.payPerViewDelay,self.tickMoney)
+			self.streamThread.start()
+		pass
+
+	def stop(self):
+		if(self.streamThreadRunning):
+			self.streamThread.cancel()
+	
+	def onStreamEnd(self):
+		if(self.streamThreadRunning == True):
+			self.streamThread.cancel()
+			self.streamThreadRunning = False
+	
+	def tickMoney(self):
+		streaming = self.hb.checkStreamOnline()
+		print("Paying viewers " + str(streaming))
+		# For all viewers, give monz
+		if streaming == True:
+			self.hb.checkViewers()
+			for viewer in self.hb.viewers:
+				self.pay(viewer,1)
+		
+		if(self.hb.stop == False and streaming == True):
+			self.streamThread = threading.Timer(self.payPerViewDelay,self.tickMoney)
+			self.streamThread.start()
+		else:
+			self.streamThread = None
+			self.streamThreadRunning = False
+		pass
 
 '''
 Free to use

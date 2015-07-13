@@ -14,22 +14,22 @@ class Help(Command):
 		
 	def checkMessage(self, message, user):
 		message = message.strip().lower()
-		if(message == "!help" or message == "!commands"):
+		if(message.find("!help") == 0 or message.find("!commands") == 0):
 			return True
 		else:
 			return False
 		
 	def onMessage(self, message, user):
 		output = ""
-		isOp = self.hb.isOp(user)
+		isOp = self.hb.isOp(user) and message.find("mod") != -1
 		for cmd in self.hb.commands:
 			pubHelp = cmd.publicHelpString
-			if pubHelp != "":
-				output += pubHelp + " ### "
 			if isOp == True:
 				help = cmd.helpString
 				if help != "":
 					output += help + " ### "
+			elif pubHelp != "":
+				output += pubHelp + " ### "
 					
 			if(len(output) > 800):
 				self.hb.message(user + ": " + output)

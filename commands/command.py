@@ -5,7 +5,9 @@ class Command:
 	def __init__(self, hb):
 		self.hb = hb
 		pass
-		
+	def getName(self):
+		return self.__class__.__name__
+	
 	def writeConf(self, conf):
 		pass
 	
@@ -19,8 +21,13 @@ class Command:
 	def onMessage(self, message, user):
 		pass
 	
+	def onTerminalCommand(self, message):
+		pass
+	
 	#In case a class has a thread
 	def start(self):
+		pass
+	def stop(self):
 		pass
 		
 	def onJoin(self, user):
