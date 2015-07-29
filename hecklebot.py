@@ -22,6 +22,7 @@ from commands.loyalty import Loyalty
 from commands.followViewers import FollowViewers
 from commands.evalCmd import EvalCMD
 from commands.betting import Betting
+from commands.gibberish import Gibberish
 
 true = True
 false = False
@@ -102,6 +103,7 @@ class Hecklebot:
 		self.commands.append(EvalCMD(self))
 		
 		self.commands.append(self.info) #perhaps last will prevent it from overriding actual commands?
+		self.commands.append(Gibberish(self))
 	
 	def start(self):
 		self.queuetimer()
@@ -377,12 +379,10 @@ class Hecklebot:
 		self.writeToChatLog(user + ": " + msg)
 		
 		lower = msg.lower()
-		
 		for cmd in self.commands:
 			if cmd.checkMessage(msg,user) == True :
 				cmd.onMessage(msg,user)
 				return
-				
 				
 
 	def handleMode(self, data):
