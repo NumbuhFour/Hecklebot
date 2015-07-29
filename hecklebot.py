@@ -144,6 +144,7 @@ class Hecklebot:
 			th.cancel()
 		self.irc.shutdown(socket.SHUT_RDWR)
 		self.irc.close()
+		self.sqli.close()
 	
 	def loadSettings(self):
 		f = open('heckle.config','r')
