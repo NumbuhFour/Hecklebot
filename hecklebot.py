@@ -97,9 +97,6 @@ class Hecklebot:
 		
 		self.sqli = SQLInterface(self)
 		self.sqli.checkStreamerConfig()
-		self.sqli.writeToConfig("testmodu", "testkey1", "Write Value")
-		print "READING FROM CONFIG EMPTY: " + self.sqli.readFromConfig("testmodu", "testkey2", "Read Default Value")
-		print "READING FROM CONFIG FILLED: " + self.sqli.readFromConfig("testmodu", "testkey1", "Read Default Value2")
 
 		self.isStreaming = True
 	
