@@ -14,70 +14,62 @@ class SQLInterface:
 		try:
 			self.hb.log("Connecting to DB...")
 			self.con = mysql.connect('localhost', 'rowbot', 'BajaBlast', 'rowbot');
+			self.cur = self.con.cursor()
 			self.hb.log("Connected to DB")
 		except mysql.Error, e:
 			print("Error %d: %s" % (e.args[0], e.args[1]))
-		finally:
-			if self.con:
-				self.con.close()
 	
+	def close(self):
+		self.con.close()
 	# Checks the database for the streamer's config table
 	# as well as its user table and creates them if necessary
 	def checkStreamerConfig(self):
 		if not self.checkTableExists(self.hb.streamer + "_config"):
 			q = self.createConfigTableQuery.format(self.hb.streamer)
-			cur = self.con.cursor()
-			cur.execute(q)
+			self.cur.execute(q)
+			self.con.commit()
 		if not self.checkTableExists(self.hb.streamer + "_users"):
 			q = self.createUserTableQuery.format(self.hb.streamer)
-			cur = self.con.cursor()
-			cur.execute(q)
+			self.cur.execute(q)
+			self.con.commit()
 		pass
 	
 	def checkTableExists(self, table):
-		q = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'dbname' AND table_name = '{0}'".format(table)
+		q = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'rowbot' AND table_name = '{0}'".format(table)
 		
-		with self.con as con:
-			cur = con.cursor()
-			cur.execute(q)
-			return cur.rowcount > 0
-		return False
+		self.cur.execute(q)
+		return self.cur.rowcount > 0
 	
 	# Write to config
 	def writeToConfig(self, module, key, value):
 		q = self.writeConfigQuery.format(self.hb.streamer, module, key, value)
-		with self.con as con:
-			cur = con.cursor()
-			cur.execute(q)
+		self.cur.execute(q)
+		self.con.commit()
 		pass
 	
 	# Read from config. If module or key does not exist,
 	# make a new one from the given default value
 	def readFromConfig(self, module, key, defaultValue):
 		q = "SELECT value FROM {0}_config WHERE module = '{1}' AND conf_key = '{2}'".format(self.hb.streamer, module, key)
-		with self.con as con:
-			cur = con.cursor()
-			cur.execute(q)
-			if(cur.rowcount > 0):
-				return cur.fetchone()[0]
-			else:
-				q = "INSERT INTO {0}_config(module,conf_key,value) VALUES('{1}', '{2}', '{3}')".format(self.hb.streamer, module,key,defaultValue)
-				cur.execute(q)
-				return defaultValue
-		return defaultValue
+		self.cur.execute(q)
+		if(self.cur.rowcount > 0):
+			return self.cur.fetchone()[0]
+		else:
+			q = "INSERT INTO {0}_config(module,conf_key,value) VALUES('{1}', '{2}', '{3}')".format(self.hb.streamer, module,key,defaultValue)
+			self.cur.execute(q)
+			self.con.commit()
+			return defaultValue
 	
 	# Read data from user table 
 	def readKeyForUser(self, key, user, defaultValue):
 		q = "SELECT value FROM {0}_users WHERE data_key = '{1}' AND username = '{2}'".format(self.hb.streamer, key, user)
-		with self.con as con:
-			cur = con.cursor()
-			cur.execute(q)
-			if(cur.rowcount > 0):
-				return cur.fetchone()[0]
-			else:
-				q = "INSERT INTO {0}_users(data_key,username,value) VALUES('{1}', '{2}', '{3}')".format(self.hb.streamer, key,user,defaultValue)
-				cur.execute(q)
-				return defaultValue
-		return defaultValue
+		self.cur.execute(q)
+		if(self.cur.rowcount > 0):
+			return self.cur.fetchone()[0]
+		else:
+			q = "INSERT INTO {0}_users(data_key,username,value) VALUES('{1}', '{2}', '{3}')".format(self.hb.streamer, key,user,defaultValue)
+			self.cur.execute(q)
+			self.con.commit()
+			return defaultValue
 	
 	###### Module Specific functions ######
