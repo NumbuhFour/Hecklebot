@@ -32,19 +32,30 @@ class Betting(Command):
 		self.publicHelpString = "!bet [choice] [bet]: Add yourself to the betting pool "
 		pass
 		
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
+		sqli.writeToConfig(self.getName(), 'running', str(self.betRunning))
+		sqli.writeToConfig(self.getName(), 'closed', str(self.betClosed))
+		sqli.writeToConfig(self.getName(), 'question', str(self.betQuestion))
+		sqli.writeToConfig(self.getName(), 'pool', str(self.pool))
+		"""
 		conf['betting'] = {}
 		conf['betting']['bettingFile'] = self.bettingFile
 		conf['betting']['betRunning'] = self.betRunning
 		conf['betting']['betClosed'] = self.betClosed
 		conf['betting']['betQuestion'] = self.betQuestion
 		conf['betting']['pool'] = self.pool
+		"""
 		
 		self.writeBetFile()
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
 		
+		self.betRunning = sqli.readFromConfig(self.getName(), 'running', "False") == "True"
+		self.betClosed = sqli.readFromConfig(self.getName(), 'closed', "False") == "True"
+		self.betQuestion = sqli.readFromConfig(self.getName(), 'question', "")
+		self.pool = int(sqli.readFromConfig(self.getName(), 'pool', "0"))
+		"""
 		if('betting' in conf):
 			self.bettingFile = conf['betting']['bettingFile']
 			self.betRunning = conf['betting']['betRunning']
@@ -57,19 +68,34 @@ class Betting(Command):
 			self.betClosed = False
 			self.betQuestion = ""
 			self.pool = 0
+		"""
 			
 		self.readBetFile()
 		pass
 	
 	def writeBetFile(self):
-		with open(self.bettingFile, 'w') as outfile: 
-			json.dump(self.betters,outfile)
+		for choice in self.betters:
+			for name in self.betters[choice]:
+				self.hb.sqli.writeKeyForUser("bet", name, str(choice) + ":" + str(self.betters[choice][name]))
+		#with open(self.bettingFile, 'w') as outfile: 
+		#	json.dump(self.betters,outfile)
 		pass
 		
 	def readBetFile(self):
-		f = open(self.bettingFile,'r')
+		rows = self.hb.sqli.readAllUsersForKey("bet")
+		for r in rows:
+			user = r[0]
+			data = r[1].split(':')
+			choice = data[0]
+			bet = int(data[1])
+			if not choice in self.betters:
+				self.betters = {}
+			
+			self.betters[user] = bet
+			
+		"""f = open(self.bettingFile,'r')
 		self.betters = json.loads(f.read());
-		f.close()
+		f.close()"""
 	
 	def checkMessage(self, message, user):
 		lower = message.strip().lower()

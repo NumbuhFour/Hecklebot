@@ -11,6 +11,8 @@ from urllib2 import URLError
 import traceback
 import sys
 
+from sqlInterface import SQLInterface
+
 from commands.koth import Koth
 from commands.help import Help
 from commands.info import Info
@@ -34,6 +36,7 @@ class Hecklebot:
 	channel = '#altaswolf'
 	server = 'irc.twitch.tv'
 	password = 'rawr';
+	sqlpass = 'doop';
 	
 	logFileName = 'log.log'
 	chatLogFileName = 'altaschatlog.txt'
@@ -57,10 +60,18 @@ class Hecklebot:
 	
 	debug = False
 	
+	sqli = None
+	
 	def __init__(self):
-		self.oauthFile = open('oauth.txt','r');
-		self.password = self.oauthFile.read();
-		self.oauthFile.close();
+		oauthFile = open('oauth.txt','r');
+		self.password = oauthFile.read();
+		oauthFile.close();
+		sqlfile = open('sql.txt','r');
+		self.sqlpass = sqlfile.read();
+		sqlfile.close();
+		
+		self.sqli = SQLInterface(self)
+		self.sqli.checkStreamerConfig()
 		
 		self.initCommands()
 		
@@ -83,6 +94,7 @@ class Hecklebot:
 		self.irc.connect((self.server,6667))
 
 		self.irc.send('PASS oauth:' + self.password + '\r\n')
+		self.password = "doop"
 		self.irc.send('USER ' + self.nick + ' 0 * : ' + self.bot_owner + '\r\n')
 		self.irc.send('NICK ' + self.nick + '\r\n')
 		self.irc.send('CAP REQ :twitch.tv/commands\r\n')
@@ -134,8 +146,12 @@ class Hecklebot:
 			th.cancel()
 		self.irc.shutdown(socket.SHUT_RDWR)
 		self.irc.close()
+		self.sqli.close()
 	
 	def loadSettings(self):
+		# Bot config data will stay in file as
+		# sql config depends on that data
+		# specifically streamer
 		f = open('heckle.config','r')
 		
 		self.conf = json.loads(f.read());
@@ -150,13 +166,13 @@ class Hecklebot:
 		self.chatLogFileName = self.conf['files']['chatlog']
 		
 		for c in self.commands:
-			c.readFromConf(self.conf)
+			c.readFromConf(self.sqli)
 	
 	def saveSettings(self):
 		self.conf = { 'bot':{"log":self.doLog, 'owner':self.bot_owner, 'streamer':self.streamer, 'nick':self.nick, 'server':self.server }, 'files':{ 'log':self.logFileName, 'chatlog':self.chatLogFileName } }
 		
 		for c in self.commands:
-			c.writeConf(self.conf)
+			c.writeConf(self.sqli)
 		
 		with open('heckle.config', 'w') as outfile: 
 			json.dump(self.conf,outfile)

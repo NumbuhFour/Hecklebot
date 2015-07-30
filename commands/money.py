@@ -24,19 +24,28 @@ class Money(Command):
 		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ### *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes ### *!grant [target] [amount]: Grants target user x monies";
 		pass
 	
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
+		sqli.writeToConfig(self.getName(), 'votedela', str(self.voteDelay))
+		sqli.writeToConfig(self.getName(), 'kpervote', str(self.karmaPerVote))
+		"""
 		conf['money'] = {}
 		conf['money']['fileName'] = self.fileName
 		conf['money']['upvoteDelay'] = self.voteDelay
 		conf['money']['moneyPerVote'] = self.karmaPerVote
+		"""
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
+		self.voteDelay = int(sqli.readFromConfig(self.getName(), 'votedela', "600"))
+		self.karmaPerVote = int(sqli.readFromConfig(self.getName(), 'kpervote', "1"))
+		self.loadBankFile()
+		"""
 		if('money' in conf):
 			self.fileName = conf['money']['fileName']
 			self.voteDelay = conf['money']['upvoteDelay']
 			self.karmaPerVote = conf['money']['moneyPerVote']
 			self.loadBankFile()
+		"""
 		pass
 		
 	def checkMessage(self, message, user):
@@ -92,7 +101,7 @@ class Money(Command):
 						name = t[:-2]
 					
 					if (name.find('@') == 0):
-						name = name[1:]
+						name = name[name.find('@')+1:]
 					if(name.find('+') != -1):
 						break;
 					
@@ -190,10 +199,12 @@ class Money(Command):
 		
 	
 	def checkBalance(self,user):
+		self.loadBankFile()
 		if(user.lower() in self.bank) == False: # and self.hb.isOnline(user) == True:
 			print user + " not found, adding"
 			self.bank[user.lower()] = {"money":0, "karma":0, "name":user}
-			self.saveBankFile()
+			# self.saveBankFile()
+			self.setBank(user.lower(), 0, 0)
 		#elif self.hb.isOnline(user) == False:
 		#	print user + " not online"
 		#	return 0
@@ -202,14 +213,42 @@ class Money(Command):
 		
 		return self.bank[user.lower()]
 	
-	def loadBankFile(self):
-		f = open(self.fileName,'r')
-		self.bank = json.loads(f.read());
-		f.close()
+	def setBank(self, user, money, karma):
+		self.bank[user]["money"] = money
+		self.bank[user]["karma"] = karma
+		self.hb.sqli.writeKeyForUser('money', user.lower(), str(money))
+		self.hb.sqli.writeKeyForUser('karma', user.lower(), str(karma))
 	
-	def saveBankFile(self):
+	def loadBankFile(self):
+		"""f = open(self.fileName,'r')
+		self.bank = json.loads(f.read());
+		f.close()"""
+		self.bank = {}
+		moneyList = self.hb.sqli.readAllUsersForKey('money')
+		karmaList = self.hb.sqli.readAllUsersForKey('karma')
+		klen = len(karmaList)
+		# They should both be equal in length
+		for i in range(0, len(moneyList)):
+			moneyEntry = moneyList[i]
+			name = moneyEntry[0]
+			money = float(moneyEntry[1])
+			
+			if(not name in self.bank):
+				self.bank[name] = {"money": 0, "karma": 0, "name": name}
+			
+			self.bank[name]["money"] = money
+			
+			if( i < klen ): # They should be equal but I've got trust issues
+				karmaEntry = karmaList[i]
+				name = karmaEntry[0]
+				karma = float(karmaEntry[1])
+				if(not name in self.bank):
+					self.bank[name] = {"money": 0, "karma": 0, "name": name}
+				self.bank[name]["karma"] = karma
+	
+	"""def saveBankFile(self):
 		with open(self.fileName, 'w') as outfile: 
-			json.dump(self.bank,outfile)
+			json.dump(self.bank,outfile)""" # Ideally we should stay synced
 	
 	def checkUser(self,user):
 		if(user.lower() in self.bank) == True:
@@ -219,12 +258,12 @@ class Money(Command):
 		
 	def pay(self, user, amount):
 		if self.checkBalance(user) != None:
-			self.bank[user.lower()]['money'] += amount
-			self.saveBankFile()
+			self.setBank(user.lower(), self.bank[user.lower()]['money']+ amount, self.bank[user.lower()]['karma'])
+			#self.saveBankFile()
 	def upvote(self, user, amount):
 		if self.checkBalance(user) != None:
-			self.bank[user.lower()]['karma'] += amount
-			self.saveBankFile()
+			self.setBank(user.lower(), self.bank[user.lower()]['money'], self.bank[user.lower()]['karma'] + amount)
+			#self.saveBankFile()
 		
 	def onJoin(self, user):
 		self.checkBalance(user)

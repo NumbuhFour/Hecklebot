@@ -20,6 +20,9 @@ class Giveaway(Command):
 	maxRaffleEntries = 1
 	minRaffleEntries = 1
 	raffle = {}
+	
+	bucketFile = "giveawayBucket.txt"
+	raffleFile = "raffle.txt"
 
 	def __init__(self, hb):
 		self.hb = hb
@@ -34,7 +37,13 @@ class Giveaway(Command):
 			self.publicHelpString += " ### !bid [amount]: Bid for the current auction ### !enterRaffle [" + self.money.moneyString + "]: Enter X number of " + self.money.moneyString + " with your name on them into the raffle ### !leaveRaffle: Remove your " + self.money.moneyString + " from the raffle "
 		pass
 		
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
+		
+		sqli.writeToConfig(self.getName(), 'givstart', str(self.giveawayStarted))
+		sqli.writeToConfig(self.getName(), 'rafstart', str(self.raffleStarted))
+		sqli.writeToConfig(self.getName(), 'maxrafen', str(self.maxRaffleEntries))
+		sqli.writeToConfig(self.getName(), 'minrafen', str(self.minRaffleEntries))
+		"""
 		conf['giveaway'] = {}
 		conf['giveaway']['bucketFile'] = self.bucketFile
 		conf['giveaway']['giveawayStarted'] = self.bucketStarted
@@ -42,16 +51,20 @@ class Giveaway(Command):
 		conf['giveaway']['raffleStarted'] = self.raffleStarted
 		conf['giveaway']['maxRaffleEntries'] = self.maxRaffleEntries
 		conf['giveaway']['minRaffleEntries'] = self.minRaffleEntries
+		"""
 		
 		self.writeBucketFile()
 		self.writeRaffleFile()
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
+		self.bucketStarted = sqli.readFromConfig(self.getName(), 'givstart', "False") == "True"
+		self.raffleStarted = sqli.readFromConfig(self.getName(), 'rafstart', "False") == "True"
+		self.maxRaffleEntries = int(sqli.readFromConfig(self.getName(), 'maxrafen', "1"))
+		self.minRaffleEntries = int(sqli.readFromConfig(self.getName(), 'minrafen', "1"))
+		"""
 		self.bucketFile = conf['giveaway']['bucketFile']
 		self.bucketStarted = conf['giveaway']['giveawayStarted']
-		self.readBucketFile()
-		
 		if('raffleFile' in conf['giveaway']):
 			self.raffleFile = conf['giveaway']['raffleFile']
 			self.raffleStarted = conf['giveaway']['raffleStarted']
@@ -61,6 +74,8 @@ class Giveaway(Command):
 			self.raffleFile = 'raffle.txt'
 			self.raffleStarted = False
 			self.maxRaffleEntries = 1
+		"""
+		self.readBucketFile()
 		self.readRaffleFile()
 		pass
 	
