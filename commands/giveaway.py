@@ -20,6 +20,9 @@ class Giveaway(Command):
 	maxRaffleEntries = 1
 	minRaffleEntries = 1
 	raffle = {}
+	
+	bucketFile = "giveawayBucket.txt"
+	raffleFile = "raffle.txt"
 
 	def __init__(self, hb):
 		self.hb = hb

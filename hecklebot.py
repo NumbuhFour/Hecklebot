@@ -70,6 +70,9 @@ class Hecklebot:
 		self.sqlpass = sqlfile.read();
 		sqlfile.close();
 		
+		self.sqli = SQLInterface(self)
+		self.sqli.checkStreamerConfig()
+		
 		self.initCommands()
 		
 		self.loadSettings()
@@ -99,9 +102,6 @@ class Hecklebot:
 		self.irc.send('JOIN #' + self.nick.lower() + '\r\n')
 
 		self.log("Connected.")
-		
-		self.sqli = SQLInterface(self)
-		self.sqli.checkStreamerConfig()
 
 		self.isStreaming = True
 	

@@ -82,10 +82,10 @@ class Betting(Command):
 		pass
 		
 	def readBetFile(self):
-		rows = self.hb.sqli.readUsersForKeys("bet")
+		rows = self.hb.sqli.readAllUsersForKey("bet")
 		for r in rows:
-			user = rows["username"]
-			data = rows["value"].split(':')
+			user = r[0]
+			data = r[1].split(':')
 			choice = data[0]
 			bet = int(data[1])
 			if not choice in self.betters:

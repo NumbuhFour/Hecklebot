@@ -5,7 +5,7 @@ class SQLInterface:
 	createUserTableQuery = "CREATE TABLE `{0}_users` ( `data_key` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `username` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, PRIMARY KEY (`data_key`(8),`username`(25))) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 	
 	writeConfigQuery = "INSERT INTO {0}_config (module, conf_key, value) VALUES (%s, %s,%s) ON DUPLICATE KEY UPDATE value = VALUES(value)"
-	writeUserQuery = "INSERT INTO {0}_users (username, data_key, value) VALUES (%s, %s,%s) ON DUPLICATE KEY UPDATE value = VALUES(value)"
+	writeUserQuery = "INSERT INTO {0}_users (data_key, username, value) VALUES (%s, %s,%s) ON DUPLICATE KEY UPDATE value = VALUES(value)"
 
 	def __init__(self, hb):
 		self.hb = hb
@@ -22,6 +22,7 @@ class SQLInterface:
 			print("Error %d: %s" % (e.args[0], e.args[1]))
 	
 	def close(self):
+		self.con.commit()
 		self.con.close()
 	# Checks the database for the streamer's config table
 	# as well as its user table and creates them if necessary
@@ -53,14 +54,14 @@ class SQLInterface:
 	# Read from config. If module or key does not exist,
 	# make a new one from the given default value
 	def readFromConfig(self, module, key, defaultValue):
-		defaultValue = self.con.escape_string(value)
+		defaultValue = self.con.escape_string(defaultValue)
 		q = "SELECT value FROM {0}_config WHERE module = '{1}' AND conf_key = '{2}'".format(self.hb.streamer, module, key)
 		self.cur.execute(q)
 		if(self.cur.rowcount > 0):
 			return self.cur.fetchone()[0]
 		else:
 			q = "INSERT INTO {0}_config(module,conf_key,value) VALUES(%s, %s, %s)".format(self.hb.streamer)
-			self.cur.execute(q, (module,key,defaultValue)
+			self.cur.execute(q, (module,key,defaultValue))
 			self.con.commit()
 			return defaultValue
 	
@@ -89,6 +90,6 @@ class SQLInterface:
 	def readAllUsersForKey(self, key):
 		q = "SELECT username, value FROM {0}_users WHERE data_key = '{1}'".format(self.hb.streamer, key)
 		self.cur.execute(q)
-		return self.cur.fetchAll()
+		return self.cur.fetchall()
 	
 	###### Module Specific functions ######
