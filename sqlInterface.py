@@ -4,8 +4,8 @@ class SQLInterface:
 	createConfigTableQuery = "CREATE TABLE `{0}_config` ( `module` tinytext COLLATE utf8_bin NOT NULL, `conf_key` tinytext COLLATE utf8_bin NOT NULL, `value` text COLLATE utf8_bin NOT NULL, PRIMARY KEY (`module`(8),`conf_key`(8))) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"
 	createUserTableQuery = "CREATE TABLE `{0}_users` ( `data_key` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `username` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, PRIMARY KEY (`data_key`(8),`username`(25))) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 	
-	writeConfigQuery = "INSERT INTO {0}_config (module, conf_key, value) VALUES ('{1}', '{2}','{3}') ON DUPLICATE KEY UPDATE value = VALUES(value)"
-	writeUserQuery = "INSERT INTO {0}_users (username, data_key, value) VALUES ('{1}', '{2}','{3}') ON DUPLICATE KEY UPDATE value = VALUES(value)"
+	writeConfigQuery = "INSERT INTO {0}_config (module, conf_key, value) VALUES (%s, %s,%s) ON DUPLICATE KEY UPDATE value = VALUES(value)"
+	writeUserQuery = "INSERT INTO {0}_users (username, data_key, value) VALUES (%s, %s,%s) ON DUPLICATE KEY UPDATE value = VALUES(value)"
 
 	def __init__(self, hb):
 		self.hb = hb
@@ -37,16 +37,16 @@ class SQLInterface:
 		pass
 	
 	def checkTableExists(self, table):
-		q = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'rowbot' AND table_name = '{0}'".format(table)
+		q = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'rowbot' AND table_name = %s"
 		
-		self.cur.execute(q)
+		self.cur.execute(q, (table, ))
 		return self.cur.rowcount > 0
 	
 	# Write to config
 	def writeToConfig(self, module, key, value):
 		value = self.con.escape_string(value)
-		q = self.writeConfigQuery.format(self.hb.streamer, module, key, value)
-		self.cur.execute(q)
+		q = self.writeConfigQuery.format(self.hb.streamer)
+		self.cur.execute(q, (module, key, value))
 		self.con.commit()
 		pass
 	
@@ -59,8 +59,8 @@ class SQLInterface:
 		if(self.cur.rowcount > 0):
 			return self.cur.fetchone()[0]
 		else:
-			q = "INSERT INTO {0}_config(module,conf_key,value) VALUES('{1}', '{2}', '{3}')".format(self.hb.streamer, module,key,defaultValue)
-			self.cur.execute(q)
+			q = "INSERT INTO {0}_config(module,conf_key,value) VALUES(%s, %s, %s)".format(self.hb.streamer)
+			self.cur.execute(q, (module,key,defaultValue)
 			self.con.commit()
 			return defaultValue
 	
@@ -73,16 +73,16 @@ class SQLInterface:
 		if(self.cur.rowcount > 0):
 			return self.cur.fetchone()[0]
 		else:
-			q = "INSERT INTO {0}_users(data_key,username,value) VALUES('{1}', '{2}', '{3}')".format(self.hb.streamer, key,user,defaultValue)
-			self.cur.execute(q)
+			q = "INSERT INTO {0}_users(data_key,username,value) VALUES(%s, %s, %s)".format(self.hb.streamer)
+			self.cur.execute(q, (key,user,defaultValue))
 			self.con.commit()
 			return defaultValue
 			
 	def writeKeyForUser(self, key, user, value):
 		user = self.con.escape_string(user)
 		value = self.con.escape_string(value)
-		q = self.writeUserQuery.format(self.hb.streamer, key, user, value)
-		self.cur.execute(q)
+		q = self.writeUserQuery.format(self.hb.streamer)
+		self.cur.execute(q, (key, user, value))
 		self.con.commit()
 		pass
 	
