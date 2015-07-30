@@ -49,7 +49,7 @@ class Betting(Command):
 		self.writeBetFile()
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
 		
 		self.betRunning = sqli.readFromConfig(self.getName(), 'running', "False") == "True"
 		self.betClosed = sqli.readFromConfig(self.getName(), 'closed', "False") == "True"

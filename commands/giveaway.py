@@ -34,7 +34,7 @@ class Giveaway(Command):
 			self.publicHelpString += " ### !bid [amount]: Bid for the current auction ### !enterRaffle [" + self.money.moneyString + "]: Enter X number of " + self.money.moneyString + " with your name on them into the raffle ### !leaveRaffle: Remove your " + self.money.moneyString + " from the raffle "
 		pass
 		
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
 		
 		sqli.writeToConfig(self.getName(), 'givstart', str(self.giveawayStarted))
 		sqli.writeToConfig(self.getName(), 'rafstart', str(self.raffleStarted))
@@ -54,7 +54,7 @@ class Giveaway(Command):
 		self.writeRaffleFile()
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
 		self.bucketStarted = sqli.readFromConfig(self.getName(), 'givstart', "False") == "True"
 		self.raffleStarted = sqli.readFromConfig(self.getName(), 'rafstart', "False") == "True"
 		self.maxRaffleEntries = int(sqli.readFromConfig(self.getName(), 'maxrafen', "1"))

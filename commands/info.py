@@ -8,10 +8,11 @@ class Info(Command):
 		self.helpString = "*!addInfo [cmd] [message]: Add a FAQ message to auto-respond to ### *!removeInfo [cmd]: Removes a FAQ message";
 		pass
 		
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
 		#conf["info"] = { "fileName":self.fileName };
+		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
 		#self.fileName = conf['info']['fileName'];
 		self.loadInfo()
 		pass
