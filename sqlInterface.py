@@ -2,7 +2,7 @@ import MySQLdb as mysql
 
 class SQLInterface:
 	createConfigTableQuery = "CREATE TABLE `{0}_config` ( `module` tinytext COLLATE utf8_bin NOT NULL, `conf_key` tinytext COLLATE utf8_bin NOT NULL, `value` text COLLATE utf8_bin NOT NULL, PRIMARY KEY (`module`(8),`conf_key`(8))) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"
-	createUserTableQuery = "CREATE TABLE `{0}_users` ( `data_key` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `username` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=latin1"
+	createUserTableQuery = "CREATE TABLE `{0}_users` ( `data_key` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `username` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, PRIMARY KEY (`data_key`(8),`username`(25))) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 	
 	writeConfigQuery = "INSERT INTO {0}_config (module, conf_key, value) VALUES ('{1}', '{2}','{3}') ON DUPLICATE KEY UPDATE value = VALUES(value)"
 	writeUserQuery = "INSERT INTO {0}_users (username, data_key, value) VALUES ('{1}', '{2}','{3}') ON DUPLICATE KEY UPDATE value = VALUES(value)"
@@ -44,6 +44,7 @@ class SQLInterface:
 	
 	# Write to config
 	def writeToConfig(self, module, key, value):
+		value = self.con.escape_string(value)
 		q = self.writeConfigQuery.format(self.hb.streamer, module, key, value)
 		self.cur.execute(q)
 		self.con.commit()
@@ -52,6 +53,7 @@ class SQLInterface:
 	# Read from config. If module or key does not exist,
 	# make a new one from the given default value
 	def readFromConfig(self, module, key, defaultValue):
+		defaultValue = self.con.escape_string(value)
 		q = "SELECT value FROM {0}_config WHERE module = '{1}' AND conf_key = '{2}'".format(self.hb.streamer, module, key)
 		self.cur.execute(q)
 		if(self.cur.rowcount > 0):
@@ -64,6 +66,8 @@ class SQLInterface:
 	
 	# Read data from user table 
 	def readKeyForUser(self, key, user, defaultValue):
+		user = self.con.escape_string(user)
+		defaultValue = self.con.escape_string(defaultValue)
 		q = "SELECT value FROM {0}_users WHERE data_key = '{1}' AND username = '{2}'".format(self.hb.streamer, key, user)
 		self.cur.execute(q)
 		if(self.cur.rowcount > 0):
@@ -75,6 +79,8 @@ class SQLInterface:
 			return defaultValue
 			
 	def writeKeyForUser(self, key, user, value):
+		user = self.con.escape_string(user)
+		value = self.con.escape_string(value)
 		q = self.writeUserQuery.format(self.hb.streamer, key, user, value)
 		self.cur.execute(q)
 		self.con.commit()
