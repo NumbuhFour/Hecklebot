@@ -9,10 +9,10 @@ class Info(Command):
 		pass
 		
 	def writeConf(self, conf):
-		conf["info"] = { "fileName":self.fileName };
+		#conf["info"] = { "fileName":self.fileName };
 	
 	def readFromConf(self, conf):
-		self.fileName = conf['info']['fileName'];
+		#self.fileName = conf['info']['fileName'];
 		self.loadInfo()
 		pass
 		
