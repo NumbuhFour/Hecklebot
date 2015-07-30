@@ -301,6 +301,9 @@ class Giveaway(Command):
 		pass
 	
 	def bid(self, user, amount):
+		if(not self.auctionRunning):
+			self.hb.message(user + ": No auction currently running!")
+			return
 		bal = self.money.checkBalance(user)
 		if amount > bal:
 			self.hb.message(user + ": You don't have that many monies! " + self.getAuctionStatus())
@@ -327,11 +330,17 @@ class Giveaway(Command):
 		if(self.timeRemaining < 5):
 			self.auctionThread = threading.Timer(self.timeRemaining, self.endAuction)
 			self.auctionThread.start()
-		elif(self.timeRemaining < 10):
+		elif(self.timeRemaining < 15):
 			self.auctionThread = threading.Timer(5, self.checkAuction)
 			self.auctionThread.start()
-		else:
+		elif(self.timeRemaining < 40):
 			self.auctionThread = threading.Timer(min(10, self.timeRemaining), self.checkAuction)
+			self.auctionThread.start()
+		elif(self.timeRemaining < 300):
+			self.auctionThread = threading.Timer(min(30, self.timeRemaining), self.checkAuction)
+			self.auctionThread.start()
+		else:
+			self.auctionThread = threading.Timer(min(60, self.timeRemaining), self.checkAuction)
 			self.auctionThread.start()
 		pass
 	
