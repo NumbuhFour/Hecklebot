@@ -36,6 +36,7 @@ class Hecklebot:
 	channel = '#altaswolf'
 	server = 'irc.twitch.tv'
 	password = 'rawr';
+	sqlpass = 'doop';
 	
 	logFileName = 'log.log'
 	chatLogFileName = 'altaschatlog.txt'
@@ -62,9 +63,12 @@ class Hecklebot:
 	sqli = None
 	
 	def __init__(self):
-		self.oauthFile = open('oauth.txt','r');
-		self.password = self.oauthFile.read();
-		self.oauthFile.close();
+		oauthFile = open('oauth.txt','r');
+		self.password = oauthFile.read();
+		oauthFile.close();
+		sqlfile = open('sql.txt','r');
+		self.sqlpass = sqlfile.read();
+		sqlfile.close();
 		
 		self.initCommands()
 		
@@ -87,6 +91,7 @@ class Hecklebot:
 		self.irc.connect((self.server,6667))
 
 		self.irc.send('PASS oauth:' + self.password + '\r\n')
+		self.password = "doop"
 		self.irc.send('USER ' + self.nick + ' 0 * : ' + self.bot_owner + '\r\n')
 		self.irc.send('NICK ' + self.nick + '\r\n')
 		self.irc.send('CAP REQ :twitch.tv/commands\r\n')

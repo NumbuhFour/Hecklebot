@@ -14,7 +14,8 @@ class SQLInterface:
 	def connect(self):
 		try:
 			self.hb.log("Connecting to DB...")
-			self.con = mysql.connect('localhost', 'rowbot', 'BajaBlast', 'rowbot');
+			self.con = mysql.connect('localhost', 'rowbot', self.hb.sqlpass, 'rowbot');
+			self.hb.sqlpass = "doop"
 			self.cur = self.con.cursor()
 			self.hb.log("Connected to DB")
 		except mysql.Error, e:

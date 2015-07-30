@@ -3,5 +3,6 @@ log.txt
 oauth.txt
 money.txt
 streamPaymentTracker.txt
+sql.txt
 
 *.log
