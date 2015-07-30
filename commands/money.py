@@ -24,19 +24,28 @@ class Money(Command):
 		self.helpString = "*!setUpvoteAmount [amount]: Sets the number of monies granted by [user]++ ### *!setUpvoteDelay [seconds]: Sets how long you must wait between upvotes ### *!grant [target] [amount]: Grants target user x monies";
 		pass
 	
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
+		sqli.writeToConfig(self.getName(), 'votedela', str(self.voteDelay))
+		sqli.writeToConfig(self.getName(), 'kpervote', str(self.karmaPerVote))
+		"""
 		conf['money'] = {}
 		conf['money']['fileName'] = self.fileName
 		conf['money']['upvoteDelay'] = self.voteDelay
 		conf['money']['moneyPerVote'] = self.karmaPerVote
+		"""
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
+		self.voteDelay = int(sqli.readFromConfig(self.getName(), 'votedela', "600"))
+		self.karmaPerVote = int(sqli.readFromConfig(self.getName(), 'kpervote', "1"))
+		self.loadBankFile()
+		"""
 		if('money' in conf):
 			self.fileName = conf['money']['fileName']
 			self.voteDelay = conf['money']['upvoteDelay']
 			self.karmaPerVote = conf['money']['moneyPerVote']
 			self.loadBankFile()
+		"""
 		pass
 		
 	def checkMessage(self, message, user):
@@ -92,7 +101,7 @@ class Money(Command):
 						name = t[:-2]
 					
 					if (name.find('@') == 0):
-						name = name[1:]
+						name = name[name.find('@')+1:]
 					if(name.find('+') != -1):
 						break;
 					
