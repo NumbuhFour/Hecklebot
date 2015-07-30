@@ -79,4 +79,9 @@ class SQLInterface:
 		self.con.commit()
 		pass
 	
+	def readAllUsersForKey(self, key):
+		q = "SELECT username, value FROM {0}_users WHERE data_key = '{1}'".format(self.hb.streamer, key)
+		self.cur.execute(q)
+		return self.cur.fetchAll()
+	
 	###### Module Specific functions ######
