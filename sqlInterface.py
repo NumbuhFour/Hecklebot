@@ -5,6 +5,7 @@ class SQLInterface:
 	createUserTableQuery = "CREATE TABLE `{0}_users` ( `data_key` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `username` tinytext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=latin1"
 	
 	writeConfigQuery = "INSERT INTO {0}_config (module, conf_key, value) VALUES ('{1}', '{2}','{3}') ON DUPLICATE KEY UPDATE value = VALUES(value)"
+	writeUserQuery = "INSERT INTO {0}_users (username, data_key, value) VALUES ('{1}', '{2}','{3}') ON DUPLICATE KEY UPDATE value = VALUES(value)"
 
 	def __init__(self, hb):
 		self.hb = hb
@@ -71,5 +72,11 @@ class SQLInterface:
 			self.cur.execute(q)
 			self.con.commit()
 			return defaultValue
+			
+	def writeKEyForUser(self, key, user, value):
+		q = self.writeUserQuery.format(self.hb.streamer, key, user, value)
+		self.cur.execute(q)
+		self.con.commit()
+		pass
 	
 	###### Module Specific functions ######
