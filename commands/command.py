@@ -8,10 +8,10 @@ class Command:
 	def getName(self):
 		return self.__class__.__name__
 	
-	def writeConf(self, conf):
+	def writeConf(self, sqli):
 		pass
 	
-	def readFromConf(self, conf):
+	def readFromConf(self, sqli):
 		pass
 	
 	''' Returns true if the message is a call for this command '''

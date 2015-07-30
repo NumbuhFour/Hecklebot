@@ -144,6 +144,9 @@ class Hecklebot:
 		self.sqli.close()
 	
 	def loadSettings(self):
+		# Bot config data will stay in file as
+		# sql config depends on that data
+		# specifically streamer
 		f = open('heckle.config','r')
 		
 		self.conf = json.loads(f.read());
@@ -158,13 +161,13 @@ class Hecklebot:
 		self.chatLogFileName = self.conf['files']['chatlog']
 		
 		for c in self.commands:
-			c.readFromConf(self.conf)
+			c.readFromConf(self.sqli)
 	
 	def saveSettings(self):
 		self.conf = { 'bot':{"log":self.doLog, 'owner':self.bot_owner, 'streamer':self.streamer, 'nick':self.nick, 'server':self.server }, 'files':{ 'log':self.logFileName, 'chatlog':self.chatLogFileName } }
 		
 		for c in self.commands:
-			c.writeConf(self.conf)
+			c.writeConf(self.sqli)
 		
 		with open('heckle.config', 'w') as outfile: 
 			json.dump(self.conf,outfile)
