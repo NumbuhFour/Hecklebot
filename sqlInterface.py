@@ -73,7 +73,7 @@ class SQLInterface:
 			self.con.commit()
 			return defaultValue
 			
-	def writeKEyForUser(self, key, user, value):
+	def writeKeyForUser(self, key, user, value):
 		q = self.writeUserQuery.format(self.hb.streamer, key, user, value)
 		self.cur.execute(q)
 		self.con.commit()
